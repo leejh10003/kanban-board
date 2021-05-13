@@ -10,7 +10,7 @@ phases:
       - mv build.sh /
       - mv before.sh /
     finally:
-      - zip /frontend.zip ./*
+      - zip -r /frontend.zip ./*
 artifacts:
   files:
     - /frontend.zip
