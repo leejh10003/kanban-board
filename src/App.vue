@@ -4,7 +4,6 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>
-    <span v-if="!$apollo.queries.test.loading">{{test}}</span>
     <router-view/>
   </div>
 </template>
@@ -31,15 +30,3 @@
   color: #42b983;
 }
 </style>
-<script>
-import gql from 'graphql-tag'
-export default {
-  apollo: {
-    test: gql`query{
-      test{
-        id
-      }
-    }`
-  }
-}
-</script>
