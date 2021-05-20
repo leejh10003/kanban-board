@@ -1,34 +1,41 @@
 <template>
   <div class="row">
-    <div class="col-3">
-      <h3>Draggable 1</h3>
-      <draggable class="list-group" :list="list1" group="people" @change="log">
-        <div
-          class="list-group-item"
-          v-for="(element, index) in list1"
-          :key="element.name"
-        >
-          {{ element.name }} {{ index }}
-        </div>
-      </draggable>
-    </div>
-
-    <div class="col-3">
-      <h3>Draggable 2</h3>
-      <draggable class="list-group" :list="list2" group="people" @change="log">
-        <div
-          class="list-group-item"
-          v-for="(element, index) in list2"
-          :key="element.name"
-        >
-          {{ element.name }} {{ index }}
-        </div>
-      </draggable>
-    </div>
-
-    <rawDisplayer class="col-3" :value="list1" title="List 1" />
-
-    <rawDisplayer class="col-3" :value="list2" title="List 2" />
+    <draggable class="list-group" :list="lists" group="column">
+      <div class="col-3" v-for="(list, index) in lists" :key="index">
+        <h3>{{list.name}}</h3>
+        <draggable class="list-group" :list="list.cards" group="card">
+            <vs-card
+            v-for="(element) in list.cards"
+            :key="element.id">
+              <template #title>
+                <h3>{{ getTitle(element) }}</h3>
+              </template>
+              <template #img>
+                <img :src="element.created_by.thumbnail" alt="">
+              </template>
+              <template #text>
+                <div v-for="(paragraph, index) in element.card_descriptions" :key="index">
+                  <a v-if="!!(paragraph.hyperlink)" :href="paragraph.hyperlink">{{paragraph.content}}</a>
+                  <p v-else-if="!!(paragraph.content)">
+                    {{paragraph.content}}
+                  </p>
+                </div>
+              </template>
+              <template #interactions>
+                <vs-button danger icon>
+                  <i class='bx bx-heart'></i>
+                </vs-button>
+                <vs-button class="btn-chat" shadow primary>
+                  <i class='bx bx-chat' ></i>
+                  <span class="span">
+                    54
+                  </span>
+                </vs-button>
+              </template>
+            </vs-card>
+        </draggable>
+      </div>
+    </draggable>
   </div>
 </template>
 <script>
@@ -42,20 +49,51 @@ export default {
   },
   data() {
     return {
-      list1: [
-        { name: "John", id: 1 },
-        { name: "Joao", id: 2 },
-        { name: "Jean", id: 3 },
-        { name: "Gerard", id: 4 }
-      ],
-      list2: [
-        { name: "Juan", id: 5 },
-        { name: "Edgard", id: 6 },
-        { name: "Johnson", id: 7 }
-      ]
+      lists: [{
+        name: 'first column',
+        cards: [
+          {
+            id: 1,
+            created_by: {
+              username: 'leejh10003',
+              thumbnail: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
+            },
+            card_descriptions: [{
+              content: "test",
+              hyperlink: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
+            }],
+            card_taggings: [{
+              tag: {
+                tag: "hello"
+              }
+            }]
+          }
+        ]
+      },{
+        name: 'second column',
+        cards: [
+          {
+            id: 2,
+            created_by: {
+              username: 'leejh10003',
+              thumbnail: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
+            },
+            card_descriptions: [{
+              content: "test",
+              hyperlink: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
+            }],
+            card_taggings: [{
+              tag: {
+                tag: "hello"
+              }
+            }]
+          }
+        ]
+      }],
     };
   },
   methods: {
+    getTitle: (element) => (element?.card_descriptions?.[0]?.content || element?.card_descriptions?.[0]?.hyperlink) ?? '',
     add: function() {
       this.list.push({ name: "Juan" });
     },
@@ -67,9 +105,6 @@ export default {
         name: el.name + " cloned"
       };
     },
-    log: function(evt) {
-      window.console.log(evt);
-    }
   }
 };
 </script>
