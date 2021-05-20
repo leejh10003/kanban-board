@@ -3,6 +3,36 @@
     <draggable class="list-group" :list="lists" group="column">
       <div class="col-3" v-for="(list, index) in lists" :key="index">
         <h3>{{list.name}}</h3>
+        <vs-button
+          v-if="list.adding === false"
+          :active="true"
+          @click="list.adding = true"
+        >
+            Add
+        </vs-button>
+        <vs-card v-if="list.adding === true">
+          <template #img>
+            <img :src="''" alt="">
+          </template>
+          <template #text>
+            <vs-input
+              type="text"
+              v-model="list.addContent"
+              label="내용"
+            />
+          </template>
+          <template #interactions>
+            <vs-button danger icon>
+              <i class='bx bx-heart'></i>
+            </vs-button>
+            <vs-button class="btn-chat" shadow primary>
+              <i class='bx bx-chat' ></i>
+              <span class="span">
+                54
+              </span>
+            </vs-button>
+          </template>
+        </vs-card>
         <draggable class="list-group" :list="list.cards" group="card">
             <vs-card
             v-for="(element) in list.cards"
@@ -51,6 +81,8 @@ export default {
     return {
       lists: [{
         name: 'first column',
+        adding: false,
+        addContent: "",
         cards: [
           {
             id: 1,
@@ -71,6 +103,8 @@ export default {
         ]
       },{
         name: 'second column',
+        adding: false,
+        addContent: "",
         cards: [
           {
             id: 2,
@@ -94,9 +128,6 @@ export default {
   },
   methods: {
     getTitle: (element) => (element?.card_descriptions?.[0]?.content || element?.card_descriptions?.[0]?.hyperlink) ?? '',
-    add: function() {
-      this.list.push({ name: "Juan" });
-    },
     replace: function() {
       this.list = [{ name: "Edgard" }];
     },
