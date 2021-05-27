@@ -78,6 +78,8 @@
 
 <script>
 import draggable from "vuedraggable";
+import gql from 'graphql-tag';
+
 export default {
   name: "two-lists",
   display: "Two Lists",
@@ -85,85 +87,40 @@ export default {
   components: {
     draggable
   },
+  apollo: {
+    lists: {
+       query: gql`query {
+        columns {
+          id
+          name
+          cards {
+            card_descriptions {
+              card_id
+              content
+              hyperlink
+            }
+            created_by {
+              name
+              thumbnail
+            }
+            id
+            card_taggings {
+              tag {
+                tag
+              }
+            }
+          }
+        }
+      }`,
+      update: data => data.columns.map(e => ({
+        adding: false,
+        addContent: "",
+        ...e,
+      })),
+    }
+  },
   data() {
     return {
-      lists: [{
-        name: 'first column',
-        adding: false,
-        addContent: "",
-        cards: [
-          {
-            id: 1,
-            created_by: {
-              username: 'leejh10003',
-              thumbnail: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
-            },
-            card_descriptions: [{
-              content: "test",
-              hyperlink: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
-            }],
-            card_taggings: [{
-              tag: {
-                tag: "hello"
-              }
-            }]
-          },
-          {
-            id: 2,
-            created_by: {
-              username: 'leejh10003',
-              thumbnail: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
-            },
-            card_descriptions: [{
-              content: "test",
-              hyperlink: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
-            }],
-            card_taggings: [{
-              tag: {
-                tag: "hello"
-              }
-            }]
-          },
-          {
-            id: 3,
-            created_by: {
-              username: 'leejh10003',
-              thumbnail: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
-            },
-            card_descriptions: [{
-              content: "test",
-              hyperlink: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
-            }],
-            card_taggings: [{
-              tag: {
-                tag: "hello"
-              }
-            }]
-          },
-        ]
-      },{
-        name: 'second column',
-        adding: false,
-        addContent: "",
-        cards: [
-          {
-            id: 2,
-            created_by: {
-              username: 'leejh10003',
-              thumbnail: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
-            },
-            card_descriptions: [{
-              content: "test",
-              hyperlink: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
-            }],
-            card_taggings: [{
-              tag: {
-                tag: "hello"
-              }
-            }]
-          }
-        ]
-      }],
     };
   },
   methods: {
