@@ -10,29 +10,28 @@
         >
             Add
         </vs-button>
-        <vs-card v-if="list.adding === true">
-          <template #img>
+        <div v-if="list.adding === true">
+          <template>
+          <div slot="header">
             <img :src="''" alt="">
-          </template>
-          <template #text>
+          </div>
+          <div>
             <vs-input
               type="text"
               v-model="list.addContent"
               label="내용"
             />
-          </template>
-          <template #interactions>
-            <vs-button danger icon>
-              <i class='bx bx-heart'></i>
+          </div>
+          <div>
+            <vs-button type="filled" color="primary" v-on:click="addCard(list.id, list.addContent)">
+              추가
             </vs-button>
-            <vs-button class="btn-chat" shadow primary>
-              <i class='bx bx-chat' ></i>
-              <span class="span">
-                54
-              </span>
+            <vs-button type="filled" color="danger">
+              취소
             </vs-button>
+          </div>
           </template>
-        </vs-card>
+        </div>
         <draggable class="list-group" :list="list.cards" group="card">
             <vs-card
             v-for="(element) in list.cards"
@@ -133,6 +132,41 @@ export default {
         name: el.name + " cloned"
       };
     },
+    addCard: function(list_id, content) {
+       //TODO : modify user id
+      this.$apollo.mutate({
+        mutation: gql`mutation addCard(
+          $list_id: Int!
+          $content: String!
+          ) {
+            insert_card_description(
+                objects: [
+                  {
+                    card: {
+                      data: {
+                        created_by_user_id: 1
+                        column_id: $list_id
+                      }
+                    }
+                    content: $content
+                    user_id: 1
+                  }
+                ]
+            ) 
+            {
+                returning {
+                    id
+                }
+            }
+        }`,
+        variables: {
+          list_id,
+          content,
+        },
+      }).then(() => {
+        this.$apollo.queries.lists.refetch();
+      });
+    }
   }
 };
 </script>
