@@ -42,6 +42,22 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "login" */ '../views/Board.vue')
   },
+  {
+    path: '/auth',
+    name: 'Auth',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "login" */ '../views/Auth.vue')
+  },
+  {
+    path: '/naverAuth',
+    name: 'NaverAuth',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "login" */ '../views/NaverTest.vue')
+  },
 ]
 
 const router = new VueRouter({
