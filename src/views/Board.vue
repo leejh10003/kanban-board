@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <draggable class="list-group" :list="lists" group="column">
+    <draggable class="list-group containers" :list="lists" group="column">
       <div class="col-3" v-for="(list, index) in lists" :key="index">
         <h3>{{list.name}}</h3>
         <vs-button
@@ -68,6 +68,14 @@
     </draggable>
   </div>
 </template>
+
+<style scoped>
+.containers {
+  display: flex;
+  justify-content: space-around;
+}
+</style>
+
 <script>
 import draggable from "vuedraggable";
 export default {
@@ -99,7 +107,39 @@ export default {
                 tag: "hello"
               }
             }]
-          }
+          },
+          {
+            id: 2,
+            created_by: {
+              username: 'leejh10003',
+              thumbnail: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
+            },
+            card_descriptions: [{
+              content: "test",
+              hyperlink: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
+            }],
+            card_taggings: [{
+              tag: {
+                tag: "hello"
+              }
+            }]
+          },
+          {
+            id: 3,
+            created_by: {
+              username: 'leejh10003',
+              thumbnail: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
+            },
+            card_descriptions: [{
+              content: "test",
+              hyperlink: 'https://media-cdn.tripadvisor.com/media/photo-s/14/0a/64/3d/your-basic-burrito-bowltasty.jpg'
+            }],
+            card_taggings: [{
+              tag: {
+                tag: "hello"
+              }
+            }]
+          },
         ]
       },{
         name: 'second column',
