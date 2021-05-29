@@ -19,12 +19,12 @@ const AUTH_TOKEN = 'apollo-token'
 
 const httpLink = new HttpLink({
   // You should use an absolute URL here
-  uri: process.env.VUE_APP_GRAPHQL_HTTP || 'https://trello.jeontuk-11.link/v1/graphql',
+  uri: process.env.VUE_APP_GRAPHQL_HTTP || 'https://trello.jeontuk-11.link/console/v1/graphql',
 });
 
 // Create the subscription websocket link
 const wsLink = new WebSocketLink({
-  uri: process.env.VUE_APP_GRAPHQL_WS || 'wss://trello.jeontuk-11.link/v1/graphql',
+  uri: process.env.VUE_APP_GRAPHQL_WS || 'wss://trello.jeontuk-11.link/console/v1/graphql',
   options: {
     reconnect: true,
     lazy: true
