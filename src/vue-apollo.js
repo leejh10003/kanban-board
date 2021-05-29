@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import { /*createApolloClient, */restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client'
+import { setContext } from '@apollo/link-context'
 import { split } from 'apollo-link'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
