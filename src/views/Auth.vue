@@ -8,12 +8,12 @@ import axios from 'axios'
 export default {
   beforeCreate: async function() {
     const { code, state } = this.$route.query
-    const { data: { token, newUser } } = await axios.post('https://trello.jeontuk-11.link/login/naver', {
+    const { data: { token } } = await axios.post('https://trello.jeontuk-11.link/login/naver', {
       code,
       state,
       redirectURI: 'https://trello.jeontuk-11.link/#/auth'
     })
-    console.log(token, newUser)
+    localStorage.setItem('token', token)
   }
 }
 </script>
