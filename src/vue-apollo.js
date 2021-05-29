@@ -7,10 +7,36 @@ import { getMainDefinition } from 'apollo-utilities'
 import { HttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import ApolloClient from "apollo-client";
+import axios from 'axios'
 // import { Auth } from 'aws-amplify'
 
 // Install the vue plugin
 Vue.use(VueApollo)
+
+export const refreshToken = async function(){
+  const { data : { token } } = await axios.post('https://trello.jeontuk-11.link/refresh')
+  return token
+}
+
+const authLink = setContext(async(_, { headers }) => {
+  try {
+    const token = localStorage.getItem('token')
+    var applyToken
+    if (!token || new Date((JSON.parse(atob(token.split('.')[1])).exp - 15) * 1000) < Date.now()) {
+      applyToken = await refreshToken()
+    } else {
+      applyToken = token
+    }
+    return {
+      headers: {
+        ...headers,
+        authorization: `Bearer ${applyToken}`
+      }
+    }
+  } catch (e) {
+    localStorage.removeItem('token')
+  }
+})
 
 // Name of the localStorage item
 const AUTH_TOKEN = 'apollo-token'
@@ -46,7 +72,7 @@ const link = split(
 
 // Create the apollo client
 const apolloClient = new ApolloClient({
-  link,
+  link: authLink.concat(link),
   cache: new InMemoryCache(),
   connectToDevTools: true,
 })
