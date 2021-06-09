@@ -26,7 +26,7 @@
             <vs-button type="filled" color="primary" v-on:click="addCard(list.id, list.addContent)">
               추가
             </vs-button>
-            <vs-button type="filled" color="danger">
+            <vs-button type="filled" color="danger" v-on:click="list.adding = false">
               취소
             </vs-button>
           </div>
