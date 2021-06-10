@@ -1,5 +1,6 @@
 <template>
-  <div class="row">
+  <div v-if="$apollo.queries.lists.loading"></div>
+  <div v-else class="row">
     <draggable class="list-group containers" :list="lists" group="column">
       <div class="col-3" v-for="(list, index) in lists" :key="index">
         <h3>{{list.name}}</h3>
@@ -64,6 +65,14 @@ export default {
     draggable,
     Task
   },
+  mounted(){
+    this.loading = this.$vs.loading({
+      type: 'corners',
+      color: '#2BD400',
+      scale: 4,
+      text: '로딩 중...'
+    })
+  },
   apollo: {
     variables: {
       id: this.$route.params.id
@@ -92,15 +101,19 @@ export default {
           }
         }
       }`,
-      update: data => data.columns.map(e => ({
-        adding: false,
-        addContent: "",
-        ...e,
-      })),
+      update: data => {
+        this.loading.close()
+        return data.columns.map(e => ({
+          adding: false,
+          addContent: "",
+          ...e,
+        }))
+      },
     }
   },
   data() {
     return {
+      loading: null
     };
   },
   methods: {
@@ -112,9 +125,9 @@ export default {
         name: el.name + " cloned"
       };
     },
-    addCard: function(list_id, content) {
+    addCard: async function(list_id, content) {
        //TODO : modify user id
-      this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: gql`mutation addCard(
           $list_id: Int!
           $content: String!
@@ -143,9 +156,8 @@ export default {
           list_id,
           content,
         },
-      }).then(() => {
-        this.$apollo.queries.lists.refetch();
-      });
+      })
+      this.$apollo.queries.lists.refetch();
     }
   }
 };
