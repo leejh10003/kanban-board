@@ -2,20 +2,12 @@
   <div id="container">
     <div class="card-link" href="#">
       <article class="blog-card">
-        <img class="post-image" v-if="!!element.created_by && !!element.created_by.thumbnail" :src="element.created_by.thumbnail" />
+        <slot name="hero">
+        </slot>
         <div class="article-details">
-          <h3 class="post-title">{{ getTitle(element) }}</h3>
-          <div v-for="(paragraph, index) in element.card_descriptions" :key="index">
-            <p class="post-description">{{ paragraph.content }}</p>
-          </div>
-          <p class="post-author">
-            <vs-button transparent color="primary">
-              테스트 태그
-            </vs-button>
-            <vs-button transparent color="danger">
-              테스트 태그
-            </vs-button>
-          </p>
+          <slot name="title" class="post-title"/>
+          <slot name="body"/>
+          <slot name="tailing" class="post-author"/>
         </div>
       </article>
     </div>
@@ -73,13 +65,13 @@ body {
   display: block;
   color: inherit;
   text-decoration: none;
-  &:hover .post-image {
+  &:hover .hero {
     @include transition(opacity 0.3s ease);
     opacity: 0.9;
   }
 }
 
-.post-image {
+.hero {
   @include transition(opacity 0.3s ease);
   width: 100%;
   height: 200px;
@@ -88,7 +80,9 @@ body {
 
 .article-details {
   padding-left: 1.5rem;
+  padding-right: 1.5rem;
   padding-bottom: 1rem;
+  padding-top: 1rem;
   text-align: left;
 }
 
@@ -150,7 +144,7 @@ body {
     justify-self: center;
   }
 
-  .post-image {
+  .hero {
   }
   
   .blog-card {
@@ -172,17 +166,5 @@ body {
 export default {
   name: "card",
   display: "Card",
-  order: 1,
-  props: {
-    element: Object
-  },
-  data() {
-    return {
-
-    };
-  },
-  methods: {
-    getTitle: (element) => (element?.card_descriptions?.[0]?.content || element?.card_descriptions?.[0]?.hyperlink) ?? '',
-  }
 };
 </script>

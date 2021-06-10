@@ -1,5 +1,6 @@
 <template>
-  <div class="row">
+  <div v-if="$apollo.queries.lists.loading"></div>
+  <div v-else class="row">
     <draggable class="list-group containers" :list="lists" group="column">
       <div class="col-3" v-for="(list, index) in lists" :key="index">
         <h3>{{list.name}}</h3>
@@ -36,7 +37,7 @@
             <div
             v-for="(element) in list.cards"
             :key="element.id">
-              <Card v-bind:element="{...element}" />
+              <Task v-bind:element="{...element}"/>
             </div>
         </draggable>
       </div>
@@ -54,7 +55,7 @@
 <script>
 import draggable from "vuedraggable";
 import gql from 'graphql-tag';
-import Card from '../components/Card.vue';
+import Task from '../components/Task'
 
 export default {
   name: "two-lists",
@@ -62,12 +63,31 @@ export default {
   order: 1,
   components: {
     draggable,
-    Card
+    Task
+  },
+  data() {
+    return {
+      loading: null
+    };
+  },
+  created(){
+    this.loading = this.$vs.loading({
+      type: 'corners',
+      color: '#2BD400',
+      scale: 4,
+      text: '로딩 중...'
+    })
   },
   apollo: {
     lists: {
-       query: gql`query {
-        columns {
+      variables(){
+        console.log(this)
+        return {
+          id: this.$route.params.id
+        }
+      },
+       query: gql`query($id: Int!) {
+        columns (where: {board_id: {_eq: $id}}){
           id
           name
           cards {
@@ -89,19 +109,18 @@ export default {
           }
         }
       }`,
-      update: data => data.columns.map(e => ({
-        adding: false,
-        addContent: "",
-        ...e,
-      })),
+      update(data) {
+        console.log(this)
+        this.loading.close()
+        return data.columns.map(e => ({
+          adding: false,
+          addContent: "",
+          ...e,
+        }))
+      },
     }
   },
-  data() {
-    return {
-    };
-  },
   methods: {
-    getTitle: (element) => (element?.card_descriptions?.[0]?.content || element?.card_descriptions?.[0]?.hyperlink) ?? '',
     replace: function() {
       this.list = [{ name: "Edgard" }];
     },
@@ -110,9 +129,9 @@ export default {
         name: el.name + " cloned"
       };
     },
-    addCard: function(list_id, content) {
+    addCard: async function(list_id, content) {
        //TODO : modify user id
-      this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: gql`mutation addCard(
           $list_id: Int!
           $content: String!
@@ -141,9 +160,8 @@ export default {
           list_id,
           content,
         },
-      }).then(() => {
-        this.$apollo.queries.lists.refetch();
-      });
+      })
+      this.$apollo.queries.lists.refetch();
     }
   }
 };
