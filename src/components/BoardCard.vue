@@ -1,6 +1,6 @@
 <template>
   <card
-  @click="board(board.id)"
+  @click="toBoard(board.id)"
   >
     <template #title>
       <h3 class="board-title">{{board.name}}</h3>
@@ -26,7 +26,7 @@ export default {
     card
   },
   methods: {
-    board: function(id){
+    toBoard: function(id){
       this.$router.push(`/board/${id}`)
     },
     mapUsers: function (users, count){
