@@ -1,9 +1,10 @@
 <template>
-  <div>
-	<a class="button_naver" v-on:click="naverlogin()">
-          <h5 style="color:black; margin-top:0px; padding-top:13px;">네이버 아이디로 로그인</h5>
-	</a>
-</div>
+  <div id="screen">
+    <div id="login-card">
+      <h1 id="login-title">Sign in</h1>
+      <img src="../assets/loginbutton.png" id="login-button" v-on:click="naverlogin()"/>
+    </div>
+  </div>
 </template>
 <script>
 export default {
@@ -15,3 +16,28 @@ export default {
   }
 }
 </script>
+<style>
+#screen{
+  width: 100vw;
+  height: 100vh;
+  background-size: cover;
+  background-image: url('../assets/background.jpg');
+}
+#login-card{
+    box-shadow: 0px 5px 20px 0px rgb(0 0 0 / 5%);
+    border-radius: 20px;
+    width: 300px;
+    position: absolute;
+    height: 200px;
+    margin-left: calc(50vw - 150px);
+    margin-top: calc(50vh - 100px);
+    background-color: white;
+}
+#login-button{
+  height: 50px;
+  cursor: pointer;
+}
+#login-title{
+  color: rgba(44, 62, 80, 1);
+}
+</style>
