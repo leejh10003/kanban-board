@@ -1,11 +1,21 @@
 <template>
-  <div>
-    {{boards}}
-  </div>  
+  <div v-if="boards.loading">
+  </div>
+  <div v-else>
+    <card
+      v-for="board in boards"
+      :key="board.id"
+    >
+    </card>
+  </div>
 </template>
 <script>
 import gql from 'graphql-tag'
+import card from '../components/Card.vue'
 export default {
+  components: {
+    card
+  },
   data: function(){
     return {}
   },

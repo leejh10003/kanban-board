@@ -36,7 +36,7 @@
             <div
             v-for="(element) in list.cards"
             :key="element.id">
-              <Card v-bind:element="{...element}" />
+              <Task v-bind:element="{...element}"/>
             </div>
         </draggable>
       </div>
@@ -54,7 +54,7 @@
 <script>
 import draggable from "vuedraggable";
 import gql from 'graphql-tag';
-import Card from '../components/Card.vue';
+import Task from '../components/Task'
 
 export default {
   name: "two-lists",
@@ -62,7 +62,7 @@ export default {
   order: 1,
   components: {
     draggable,
-    Card
+    Task
   },
   apollo: {
     lists: {
@@ -101,7 +101,6 @@ export default {
     };
   },
   methods: {
-    getTitle: (element) => (element?.card_descriptions?.[0]?.content || element?.card_descriptions?.[0]?.hyperlink) ?? '',
     replace: function() {
       this.list = [{ name: "Edgard" }];
     },
