@@ -1,9 +1,9 @@
 <template>
   <div v-if="$apollo.queries.boards.loading">
-    테스트
   </div>
   <div v-else>
     <board-card
+      :style="{maxHeight: '125px'}"
       v-for="board in boards"
       :key="board.id"
       :board="board"
@@ -17,8 +17,18 @@ export default {
   components: {
     'board-card': BoardCard
   },
+  mounted(){
+    this.loading = this.$vs.loading({
+      type: 'corners',
+      color: '#2BD400',
+      scale: 4,
+      text: '로딩 중...'
+    })
+  },
   data: function(){
-    return {}
+    return {
+      loading: null
+    }
   },
   apollo: {
     boards: {
@@ -37,7 +47,13 @@ export default {
           name
           id
         }
-      }`
+      }`,
+      update: function (data){
+        if (this.loading){
+          this.loading.close()
+        }
+        return data.boards
+      }
     }
   }
 }

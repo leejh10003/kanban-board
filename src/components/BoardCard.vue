@@ -2,7 +2,7 @@
   <card
   >
     <template #title>
-      <h3>{{board.name}}</h3>
+      <h3 class="board-title">{{board.name}}</h3>
     </template>
     <template #tailing>
       <div class="tailing-users">
@@ -57,6 +57,11 @@ export default {
 }
 </script>
 <style scoped>
+.board-title{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
 .user-entities{
   display: inline-block;
   margin-left: -10px;
