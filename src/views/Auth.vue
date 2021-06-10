@@ -15,6 +15,7 @@ export default {
       text: '로그인 중...'
     })
     try {
+      await new Promise(resolve => setTimeout(resolve, 3000))
       const result = await axios.post('https://trello.jeontuk-11.link/login/naver', {
         code, state
       })
