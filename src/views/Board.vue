@@ -65,7 +65,12 @@ export default {
     draggable,
     Task
   },
-  mounted(){
+  data() {
+    return {
+      loading: null
+    };
+  },
+  created(){
     this.loading = this.$vs.loading({
       type: 'corners',
       color: '#2BD400',
@@ -74,10 +79,13 @@ export default {
     })
   },
   apollo: {
-    variables: {
-      id: this.$route.params.id
-    },
     lists: {
+      variables(){
+        console.log(this)
+        return {
+          id: this.$route.params.id
+        }
+      },
        query: gql`query($id: Int!) {
         columns (where: {board_id: {_eq: $id}}){
           id
@@ -101,7 +109,8 @@ export default {
           }
         }
       }`,
-      update: data => {
+      update(data) {
+        console.log(this)
         this.loading.close()
         return data.columns.map(e => ({
           adding: false,
@@ -110,11 +119,6 @@ export default {
         }))
       },
     }
-  },
-  data() {
-    return {
-      loading: null
-    };
   },
   methods: {
     replace: function() {
