@@ -5,6 +5,7 @@
 </template>
 <script>
 import axios from 'axios' //eslint-disable-line no-unused-vars
+import jwtDecode from "jwt-decode";
 export default {
   mounted: async function(){
     const { code, state } = this.$route.query //eslint-disable-line no-unused-vars
@@ -16,10 +17,11 @@ export default {
     })
     try {
       await new Promise(resolve => setTimeout(resolve, 3000))
-      const result = await axios.post('https://trello.jeontuk-11.link/login/naver', {
+      const { data: { newUser, token } } = await axios.post('https://trello.jeontuk-11.link/login/naver', {//eslint-disable-line no-unused-vars
         code, state
       })
-      console.log(result)
+      const authResult = jwtDecode(token)
+      console.log(authResult)
     } catch (e){
       console.error(e)
       loading.close()
