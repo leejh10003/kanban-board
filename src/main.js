@@ -4,6 +4,7 @@ import router from './router'
 import Vuesax from 'vuesax'
 //import { createProvider } from './vue-apollo'
 import { apolloProvider } from './vue-apollo'
+import { store } from './vuex-config'
 
 Vue.config.productionTip = false
 import 'vuesax/dist/vuesax.css' //Vuesax styles
@@ -12,6 +13,7 @@ import 'vuesax/dist/vuesax.css' //Vuesax styles
   })
 new Vue({
   router,
+  store,
   apolloProvider,
   //apolloProvider: createProvider(),
   render: h => h(App)
