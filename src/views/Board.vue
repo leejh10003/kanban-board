@@ -65,9 +65,12 @@ export default {
     Task
   },
   apollo: {
+    variables: {
+      id: this.$route.params.id
+    },
     lists: {
-       query: gql`query {
-        columns {
+       query: gql`query($id: Int!) {
+        columns (where: {board_id: {_eq: $id}}){
           id
           name
           cards {

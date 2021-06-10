@@ -1,5 +1,6 @@
 <template>
   <card
+  @click="board(board.id)"
   >
     <template #title>
       <h3 class="board-title">{{board.name}}</h3>
@@ -25,6 +26,9 @@ export default {
     card
   },
   methods: {
+    board: function(id){
+      this.$router.push(`/board/${id}`)
+    },
     mapUsers: function (users, count){
       const entities = users.map((user) => {
         if(user.thumbnail){
