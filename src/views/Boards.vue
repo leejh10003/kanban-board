@@ -11,10 +11,15 @@ export default {
   },
   apollo: {
     boards: {
-      query: gql`query{
+      query: gql`query {
         boards{
-          id
+          boards_users(order_by: [{kind: asc}, {id: desc}]){
+            thumbnail
+            name
+            id
+          }
           name
+          id
         }
       }`
     }
