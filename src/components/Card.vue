@@ -80,7 +80,9 @@ body {
 
 .article-details {
   padding-left: 1.5rem;
+  padding-right: 1.5rem;
   padding-bottom: 1rem;
+  padding-top: 1rem;
   text-align: left;
 }
 

@@ -1,20 +1,21 @@
 <template>
-  <div v-if="boards.loading">
+  <div v-if="$apollo.queries.boards.loading">
+    테스트
   </div>
   <div v-else>
-    <card
+    <board-card
       v-for="board in boards"
       :key="board.id"
-    >
-    </card>
+      :board="board"
+    />
   </div>
 </template>
 <script>
 import gql from 'graphql-tag'
-import card from '../components/Card.vue'
+import BoardCard from '../components/BoardCard.vue'
 export default {
   components: {
-    card
+    'board-card': BoardCard
   },
   data: function(){
     return {}
@@ -23,10 +24,15 @@ export default {
     boards: {
       query: gql`query {
         boards{
-          boards_users(order_by: [{kind: asc}, {id: desc}]){
+          boards_users(order_by: [{kind: asc}, {id: desc}], limit: 5){
             thumbnail
             name
             id
+          }
+          boards_users_aggregate{
+            aggregate{
+              count
+            }
           }
           name
           id
