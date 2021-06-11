@@ -2,13 +2,15 @@
   <div id="container">
     <div class="card-link" href="#">
       <article class="blog-card">
-        <slot name="hero">
-        </slot>
-        <div class="article-details">
-          <slot name="title" class="post-title"/>
-          <slot name="body"/>
-          <slot name="tailing" class="post-author"/>
+        <div class="article-border">
+          <slot name="hero">
+          </slot>
+          <div class="article-details">
+            <slot name="title" class="post-title"/>
+            <slot name="body"/>
+          </div>
         </div>
+        <slot name="tailing" class="post-author"/>
       </article>
     </div>
 </div>
@@ -56,9 +58,17 @@ body {
 }
 
 .blog-card {
-  background: $white;
+  background: #f0f0f0; //Change this
   box-shadow: 0 0.1875rem 1.5rem $shadow;
   border-radius: 0.375rem;
+  //padding-top: 0.3rem;
+}
+
+.article-border {
+  background: white; //Change this
+  border-radius: 0.375rem;
+  margin: 1rem; //Change this
+  padding: 0.5rem; //Change this
 }
 
 .card-link {
@@ -115,8 +125,7 @@ body {
   display: flex;
   font-size: 0.875rem;
   line-height: 1;
-  margin: 1.125rem 0 0 0;
-  padding: 1.125rem 0 0 0;
+  padding: 0 0 0.3rem 0.3rem;
   // border-top: 0.0625rem solid $border;
 }
 

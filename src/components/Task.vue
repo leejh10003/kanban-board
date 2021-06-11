@@ -38,13 +38,3 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.post-author {
-  display: flex;
-  font-size: 0.875rem;
-  line-height: 1;
-  margin: 1.125rem 0 0 0;
-  padding: 1.125rem 0 0 0;
-  /*border-top: 0.0625rem solid $border;*/
-}
-</style>
