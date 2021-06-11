@@ -29,7 +29,15 @@
     <router-view style="padding-top: 44px"/>
   </div>
 </template>
-
+<script>
+export default {
+  data(){
+    return {
+      active: 'guide',
+    }
+  }
+}
+</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
