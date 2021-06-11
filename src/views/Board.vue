@@ -43,14 +43,13 @@
                 </div>
               </template>
             </div>
-            <draggable class="list-group" :list="list.cards" group="card">
+            <draggable class="list-group list-card" :list="list.cards" group="card">
               <div v-for="element in list.cards" :key="element.id">
                 <Task v-bind:element="{ ...element }" />
               </div>
             </draggable>
           </div>
         </div>
-        <div class="divider"></div>
       </div>
 
       <div class="column-adder">
@@ -109,6 +108,17 @@
 
 .list-for {
   display: flex;
+}
+
+.list-container {
+  min-width: 380px;
+  padding: 1rem;
+}
+
+.list-card {
+  background: #777;
+  box-shadow: 0 0.1875rem 1.5rem rgba(0, 0, 0, 0.2);
+  border-radius: 0.375rem;
 }
 </style>
 
