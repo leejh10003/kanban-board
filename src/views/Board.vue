@@ -5,7 +5,7 @@
       <div class="list-for" v-for="(list, index) in lists" :key="index">
         <div class="list-container">
           <div class="col-3">
-            <h3>{{ list.name }}</h3>
+            <h3 class="column-name">{{ list.name }}</h3>
             <vs-button
               v-if="list.adding === false"
               :active="true"
@@ -87,6 +87,11 @@
 </template>
 
 <style lang="scss" scoped>
+.column-name {
+  text-align: left;
+  padding-left: 10px;
+}
+
 .column-adder {
   padding-top: 20px;
 }
@@ -119,6 +124,7 @@
   background: #777;
   box-shadow: 0 0.1875rem 1.5rem rgba(0, 0, 0, 0.2);
   border-radius: 0.375rem;
+  min-height: 50px;
 }
 </style>
 
