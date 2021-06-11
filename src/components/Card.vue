@@ -48,7 +48,7 @@ $shadow: rgba(0, 0, 0, 0.2);
 .article-border {
   background: white; //Change this
   border-radius: 0.375rem;
-  margin: 5px; //Change this
+  margin: 0px; //Change this
   padding: 0.5rem; //Change this
 }
 
@@ -70,11 +70,8 @@ $shadow: rgba(0, 0, 0, 0.2);
 }
 
 .article-details {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-bottom: 1rem;
-  padding-top: 1rem;
   text-align: left;
+  margin: 10px;
 }
 
 .post-title {
