@@ -5,14 +5,17 @@
       <div class="list-for" v-for="(list, index) in lists" :key="index">
         <div class="list-container">
           <div class="col-3">
-            <h4 class="column-name">{{ list.name }}</h4>
-            <vs-button
-              v-if="list.adding === false"
-              :active="true"
-              @click="list.adding = true"
-            >
-              Add
-            </vs-button>
+            <div style="display: flex; align-items: baseline">
+              <h4 class="column-name">{{ list.name }}</h4>
+              <vs-button
+                style="margin-left: auto"
+                v-if="list.adding === false"
+                :active="true"
+                @click="list.adding = true"
+              >
+                Add
+              </vs-button>
+            </div>
             <div v-if="list.adding === true">
               <template>
                 <div slot="header">
