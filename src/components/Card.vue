@@ -33,7 +33,8 @@ $shadow: rgba(0, 0, 0, 0.2);
 
 
 #container {
-  width: 400px;
+  display: inline-block;
+  width: calc(100% - 20px);
   padding: 10px;
 }
 
