@@ -59,7 +59,7 @@ body {
 
 .blog-card {
   background: #f0f0f0; //Change this
-  box-shadow: 0 0.1875rem 1.5rem $shadow;
+  box-shadow: 0 0.1875rem 2px 2px $shadow;
   border-radius: 0.375rem;
   //padding-top: 0.3rem;
 }
