@@ -21,7 +21,7 @@
           <div style="display: flex">
             <vs-tooltip>
               <template #tooltip>
-                {{currentUser.name}}
+                {{currentUser.name}}(기본)
               </template>
               <vs-avatar v-if="currentUser.thumbnail === null">
                 <template #text>
