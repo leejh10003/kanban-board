@@ -8,12 +8,15 @@
             <div style="display: flex; align-items: baseline">
               <h4 class="column-name">{{ list.name }}</h4>
               <vs-button
+                circle
+                icon
+                transparent
                 style="margin-left: auto"
                 v-if="list.adding === false"
                 :active="true"
                 @click="list.adding = true"
               >
-                Add
+                <i class ="bx bx-plus"/>
               </vs-button>
             </div>
             <div class="list-card">
@@ -49,7 +52,7 @@
               </card>
               <draggable class="list-group " :list="list.cards" group="card">
                 <div v-for="element in list.cards" :key="element.id">
-                  <Task v-bind:element="{ ...element }" v-bind:refetch="refetch" v-bind:tagList="tags"/>
+                  <Task style="max-width: 300px" v-bind:element="{ ...element }" v-bind:refetch="refetch" v-bind:tagList="tags"/>
                 </div>
               </draggable>
             </div>
@@ -96,7 +99,12 @@
   text-align: left;
   padding-left: 10px;
 }
-
+.col-3{
+  width: 300px
+}
+.list-for{
+  width: 340px
+}
 .column-adder {
   padding-top: 20px;
 }
