@@ -20,10 +20,14 @@
           </vs-tooltip></div>
           <div style="display: flex">
             <vs-tooltip>
+              <template #tooltip>
+                {{currentUser.name}}
+              </template>
               <vs-avatar>
-                <template #text>
+                <template v-if="currentUser.thumbnail === null" #text>
                   {{getInitial(currentUser.name)}}
                 </template>
+                <img v-else :src="currentUser.thumbnail" alt="">
               </vs-avatar>
             </vs-tooltip>
           </div>
