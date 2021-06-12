@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <div class="card-link" href="#">
-      <article class="blog-card">
+      <article class="blog-card" @click.stop="click">
         <div class="article-border">
           <slot  name="hero">
           </slot>
@@ -102,5 +102,10 @@ $shadow: rgba(0, 0, 0, 0.2);
 export default {
   name: "card",
   display: "Card",
+  methods: {
+    click(){
+      this.$emit('click')
+    }
+  }
 };
 </script>
