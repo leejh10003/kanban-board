@@ -8,15 +8,17 @@ export const store = new Vuex.Store({
     loggedIn: false,
     user: {
       thumbnail: null,
-      name: null
+      name: null,
+      email: null
     }
   },
   mutations: {
     login (state, user) {
-      const { name, thumbnail } = user
+      const { name, thumbnail, email } = user
       state.loggedIn = true
       state.user.thumbnail = thumbnail
       state.user.name = name
+      state.user.email = email
     },
     logout (state){
       state.loggedIn = false
