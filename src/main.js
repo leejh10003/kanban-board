@@ -8,6 +8,11 @@ import { store } from './vuex-config'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import locale from 'element-ui/lib/locale/lang/ko'
+
+Vue.use(ElementUI, {locale});
 
 Vue.config.productionTip = false
 import 'vuesax/dist/vuesax.css' //Vuesax styles
