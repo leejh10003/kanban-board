@@ -13,6 +13,7 @@
         <vs-input v-model="newBoardTitle" placeholder="새 보드 제목"/>
         <div style="display: flex; align-items: center;"><h4 style="text-align: left;">관리자</h4> 
           <vs-tooltip>
+            {{`${currentUser.thumbnail} ${currentUser.name} ${currentUser.email}`}}
             <md-icon style="margin: 0px; margin-left: 8px;">help_outline</md-icon>
             <template #tooltip>
               해당 보드에 관한 모든 권한을 갖습니다. 보드를 생성하신 사용자님은 기본적으로 관리자입니다.
@@ -73,6 +74,11 @@ import gql from 'graphql-tag'
 import BoardCard from '../components/BoardCard.vue'
 /** */
 export default {
+  computed: {
+    currentUser(){
+      return this.$store.state.user
+    }
+  },
   methods: {
     splitTwo(list){
       var index = 0;
@@ -96,6 +102,7 @@ export default {
       scale: 4,
       text: '로딩 중...'
     })
+    console.log(this.$store)
   },
   data: function(){
     return {
