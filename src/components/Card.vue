@@ -89,7 +89,6 @@ $shadow: rgba(0, 0, 0, 0.2);
 }
 
 .post-author {
-  display: flex;
   font-size: 0.875rem;
   line-height: 1;
   padding: 0 0 0.3rem 0.3rem;
