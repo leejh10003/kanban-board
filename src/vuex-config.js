@@ -9,6 +9,7 @@ export const store = new Vuex.Store({
     thumbnail: null,
     name: null,
     email: null,
+    id: null,
   },
   mutations: {
     login (state, user) {
@@ -16,6 +17,7 @@ export const store = new Vuex.Store({
       state.email = user.email
       state.name = user.name
       state.thumbnail = user.thumbnail
+      state.id = parseInt(user["https://hasura.io/jwt/claims"]['x-hasura-user-id'])
     },
     logout (state){
       state.loggedIn = false
