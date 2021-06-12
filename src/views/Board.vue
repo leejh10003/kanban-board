@@ -130,6 +130,11 @@
   border: 0px;
   width: calc(100% - 70px);
   font-weight: bold;
+  border: 1px solid transparent;
+}
+.column-name:hover{
+  border: 1px solid #dddddd;
+  border-radius: 8px;
 }
 .col-3{
   width: 300px
