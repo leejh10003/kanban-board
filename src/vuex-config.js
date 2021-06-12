@@ -12,12 +12,10 @@ export const store = new Vuex.Store({
   },
   mutations: {
     login (state, user) {
-      console.log(user)
       state.loggedIn = true
       state.email = user.email
       state.name = user.name
       state.thumbnail = user.thumbnail
-      console.log(state)
     },
     logout (state){
       state.loggedIn = false
