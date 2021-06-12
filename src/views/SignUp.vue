@@ -50,7 +50,6 @@
       submit(e) {
       e.preventDefault();
       const { username, password } = this.$data;
-      console.log(username);
       this.$apollo.mutate({
         mutation: ADD_USER,
         variables: {

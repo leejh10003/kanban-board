@@ -166,7 +166,6 @@ export default {
   apollo: {
     lists: {
       variables() {
-        console.log(this);
         return {
           id: this.$route.params.id,
         };
@@ -197,7 +196,6 @@ export default {
         }
       `,
       update(data) {
-        console.log(this);
         this.loading.close();
         return data.columns.map((e) => ({
           adding: false,

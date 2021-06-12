@@ -1,9 +1,10 @@
 <template>
   <card
-    v-on:click.native="toBoard(board.id)"
+    @click="toBoard(board.id)"
     >
       <template #title>
-        <h3 class="board-title">{{board.name}}</h3>
+        <h3 v-if="!titleEditing" @click.stop="titleEdit" class="board-title">{{board.name}}</h3>
+        <el-input v-else v-model="board.name" @click.stop="titleEdit" class="board-title"/>
       </template>
       <template #tailing>
         <div class="tailing-users">
@@ -22,10 +23,18 @@
 <script>
 import card from './Card.vue'
 export default {
+  data(){
+    return {
+      titleEditing: false,
+    }
+  },
   components: {
     card
   },
   methods: {
+    titleEdit(){
+      this.titleEditing = true
+    },
     toBoard: function(id){
       this.$router.push(`/board/${id}`)
     },
@@ -65,6 +74,10 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  border: 1px solid transparent;
+}
+.board-title:hover{
+  border: 1px solid black;
 }
 .user-entities{
   display: inline-block;
