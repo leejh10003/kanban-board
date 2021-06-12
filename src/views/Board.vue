@@ -15,7 +15,7 @@
                 transparent
                 style="margin-left: auto"
                 v-if="list.adding === false && list.fixingTitle === false"
-                @click="fixListTitle(list)"
+                @click="list.adding = true"
               >
                 <i class ="bx bx-plus"/>
               </vs-button>
