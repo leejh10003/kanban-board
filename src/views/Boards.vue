@@ -19,10 +19,10 @@
             </template>
           </vs-tooltip></div>
           <div style="display: flex">
+            {{currentUser.name}}
             <vs-tooltip>
               <vs-avatar>
                 <template #text>
-                  {{currentUser.name}}
                   {{getInitial(currentUser.name)}}
                 </template>
               </vs-avatar>
