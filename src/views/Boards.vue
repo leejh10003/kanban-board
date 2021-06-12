@@ -109,15 +109,12 @@
         </div>
       </template>
     </vs-dialog>
-    <vs-row v-for="(row, index) in splitTwo(boards)" :key="`row${index}`" vs-justify="center">
-      <vs-col vs-type="flex" vs-justify="center" vs-align="center" :lg="row.length === 1 ? 4 : 2" :sm="1" :xs="0">
-      </vs-col>
-      <vs-col vs-type="flex" vs-justify="center" vs-align="center" lg="4" sm="5" xs="12" v-for="board in row" :key="`board${board.id}`">
+    <vs-row v-for="(row, index) in splitTwo(boards)" :key="`row${index}`" justify="flex-start">
+      <vs-col vs-type="flex" vs-justify="center" vs-align="center" lg="3" sm="6" xs="12" v-for="board in row" :key="`board${board.id}`">
         <board-card
+          style="max-width: 280px"
           :board="board"
         />
-      </vs-col>
-      <vs-col vs-type="flex" vs-justify="center" vs-align="center" :lg="row.length === 1 ? 4 : 2" :sm="1" :xs="0">
       </vs-col>
     </vs-row>
     <md-button class="md-fab" id="create-board" @click="addNewCard = true">
@@ -223,8 +220,8 @@ export default {
       var index = 0;
       var tempArray = [];
       
-      for (index = 0; index < list.length; index += 2) {
-          var chunk = list.slice(index, index+2);
+      for (index = 0; index < list.length; index += 4) {
+          var chunk = list.slice(index, index+4);
           // Do something if you want with the group
           tempArray.push(chunk);
       }
