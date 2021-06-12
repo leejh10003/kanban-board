@@ -17,34 +17,13 @@
     </template>
     <template #tailing>
       <div class="post-author">
-        <el-select
-          class="tag-select"
-          v-model="tagIds"
-          multiple
-          filterable
-          allow-create
-          default-first-option
-        >
-          <el-option
-            v-for="item in tagList"
-            :key="item.id"
-            :label="item.tag"
-            :value="item.id"
-          >
-          </el-option>
-        </el-select>
+        <md-chips v-model="tags" md-placeholder="Add Tag" @md-insert="insertTagHandler" @md-delete="removeTagHandler">
+        </md-chips>
       </div>
     </template>
   </Card>
 </template>
 <style>
-.el-select {
-  width: 80%;
-  color: black;
-}
-.dialog-tag-list {
-  display: flex;
-}
 </style>
 <script>
 import Card from "./Card.vue";
@@ -56,13 +35,14 @@ export default {
   data() {
     return {
       active: false,
-      tagIds: [],
+      tags: [],
       newTagName: "",
+      newTags: [],
     };
   },
   created() {
-    this.$data.tagIds = this.$props.element.card_taggings.map((e) => {
-      return e.tag.id;
+    this.$data.tags = this.$props.element.card_taggings.map((e) => {
+      return e.tag.tag;
     });
   },
   props: {
@@ -81,9 +61,9 @@ export default {
         return e.tag.id;
       });
     },
-    addNewTag: async function (tagName) {
+    addTag: async function (tagName) {
       const boardId = this.$route.params.id;
-      await this.$apollo.mutate({
+      const data = await this.$apollo.mutate({
         mutation: gql`
           mutation addTag($board_id: Int!, $tag_name: String!) {
             insert_tag(objects: [{ board_id: $board_id, tag: $tag_name }]) {
@@ -98,16 +78,65 @@ export default {
           tag_name: tagName,
         },
       });
+      return data.data.insert_tag.returning[0].id;
+    },
+    addCardTag: async function (tagId, cardId) {
+      await this.$apollo.mutate({
+        mutation: gql`
+          mutation addCardTag($tag_id: Int!, $card_id: Int!) {
+            insert_card_tagging(objects: [{ tag_id: $tag_id, card_id: $card_id }]) {
+              returning {
+                card_id
+              }
+            }
+          }
+        `,
+        variables: {
+          tag_id: tagId,
+          card_id: cardId
+        },
+      });
+    },
+    removeCardTag: async function (tagId, cardId) {
+      await this.$apollo.mutate({
+        mutation: gql`
+          mutation removeCardTag($tag_id: Int!, $card_id: Int!) {
+            delete_card_tagging(where: { tag_id: {_eq: $tag_id}, card_id: {_eq: $card_id} }) {
+              returning {
+                card_id
+              }
+            }
+          }
+        `,
+        variables: {
+          tag_id: tagId,
+          card_id: cardId
+        },
+      });
+    },
+    insertTagHandler: async function (newTag) {
+      console.log(newTag);
+      const equalTag = this.$props.tagList.find(e => e.tag === newTag);
+      let newTagId;
+      console.log(equalTag);
+      if (equalTag != null) {
+        newTagId = equalTag.id;
+      } else {
+        newTagId = await this.addTag(newTag);
+      }
 
-      this.$props.refetch();
+      this.$data.newTags.push({
+        id: newTagId,
+        tag: newTag
+      });
+
+      await this.addCardTag(newTagId, this.$props.element.id);
     },
-    checkTag(id) {
-      return !!this.$data.tagIds[id];
-    },
-    switchTag(id) {
-      this.$data.tagIds[id] = !this.$data.tagIds[id];
-      console.log(this.$data.tagIds);
-    },
+    removeTagHandler: async function (tag) {
+      const equalTag = this.$props.tagList.find(e => e.tag === tag) || this.$data.newTags.find(e => e.tag === tag);
+      const tagId = equalTag.id;
+      await this.removeCardTag(tagId, this.$props.element.id);
+    }
   },
 };
 </script>
