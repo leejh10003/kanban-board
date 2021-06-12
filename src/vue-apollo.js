@@ -23,7 +23,8 @@ export const refreshToken = async function(){
     const user = jwtDecode(token)
     store.commit('login', user)
     return token
-  } catch {
+  } catch(e) {
+    console.error(e)
     localStorage.removeItem('token')
     store.commit('logout')
   }
