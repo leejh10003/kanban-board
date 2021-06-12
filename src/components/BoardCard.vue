@@ -98,5 +98,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  margin: 10px;
 }
 </style>

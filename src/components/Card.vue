@@ -49,7 +49,7 @@ $shadow: rgba(0, 0, 0, 0.2);
 .article-border {
   background: white; //Change this
   border-radius: 0.375rem;
-  margin: 0px; //Change this
+  margin: 5px; //Change this
   padding: 0.5rem; //Change this
 }
 

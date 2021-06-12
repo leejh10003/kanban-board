@@ -13,11 +13,18 @@
       <vs-col vs-type="flex" vs-justify="center" vs-align="center" :lg="row.length === 1 ? 4 : 2" :sm="1" :xs="0">
       </vs-col>
     </vs-row>
-    <!--<vs-row >
-      
-    </vs-row>-->
+    <md-button class="md-fab" id="create-board">
+      <md-icon>add</md-icon>
+    </md-button>
   </div>
 </template>
+<style>
+#create-board{
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+}
+</style>
 <script>
 import gql from 'graphql-tag'
 import BoardCard from '../components/BoardCard.vue'
