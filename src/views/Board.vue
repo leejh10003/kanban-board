@@ -49,7 +49,7 @@
               </card>
               <draggable class="list-group " :list="list.cards" group="card">
                 <div v-for="element in list.cards" :key="element.id">
-                  <Task v-bind:element="{ ...element }" />
+                  <Task v-bind:element="{ ...element }" v-bind:refetch="refetch" v-bind:tagList="tags"/>
                 </div>
               </draggable>
             </div>
@@ -188,10 +188,16 @@ export default {
               id
               card_taggings {
                 tag {
+                  id
                   tag
                 }
               }
             }
+          }
+
+          tag(where: { board_id: { _eq: $id } }) {
+            id
+            tag
           }
         }
       `,
@@ -202,6 +208,24 @@ export default {
           addContent: "",
           ...e,
         }));
+      },
+    },
+    tags: {
+      variables() {
+        return {
+          id: this.$route.params.id,
+        };
+      },
+      query: gql`
+        query ($id: Int!) {
+          tag(where: { board_id: { _eq: $id } }) {
+            id
+            tag
+          }
+        }
+      `,
+      update(data) {
+        return data.tag;
       },
     },
   },
@@ -267,8 +291,11 @@ export default {
         },
       });
       this.$data.addingColumn = false;
-      this.$apollo.queries.lists.refetch();
     },
+    refetch: function () {
+      this.$apollo.queries.lists.refetch();
+      this.$apollo.queries.tags.refetch();
+    }
   },
 };
 </script>
