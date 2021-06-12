@@ -20,6 +20,7 @@ export const store = new Vuex.Store({
       state.user.thumbnail = thumbnail
       state.user.name = name
       state.user.email = email
+      console.log(state.user)
     },
     logout (state){
       state.loggedIn = false
