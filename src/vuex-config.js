@@ -14,6 +14,7 @@ export const store = new Vuex.Store({
   },
   mutations: {
     login (state, user) {
+      console.log(user)
       state.loggedIn = true
       state.user.thumbnail = user.thumbnail
       state.user.name = user.name

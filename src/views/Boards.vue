@@ -76,7 +76,6 @@ import BoardCard from '../components/BoardCard.vue'
 export default {
   computed: {
     currentUser(){
-      console.log(this.$store.state.user)
       return this.$store.state.user
     }
   },
@@ -103,7 +102,6 @@ export default {
       scale: 4,
       text: '로딩 중...'
     })
-    console.log(this.$store)
   },
   data: function(){
     return {
