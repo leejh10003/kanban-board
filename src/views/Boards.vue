@@ -76,7 +76,7 @@ import BoardCard from '../components/BoardCard.vue'
 export default {
   computed: {
     currentUser(){
-      return this.$store.state.user
+      return this.$store.state
     }
   },
   methods: {
