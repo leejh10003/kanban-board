@@ -95,15 +95,18 @@ export default {
   margin-inline-end: 0px;
   font-weight: bold;
   width: 100%;
+  min-height: 1.17em;
 }
 .board-title{
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   border: 1px solid transparent;
+  min-height: 1.17em;
 }
 .board-title:hover{
   border: 1px solid black;
+  min-height: 1.17em;
 }
 .user-entities{
   display: inline-block;
