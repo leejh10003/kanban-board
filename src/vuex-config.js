@@ -16,9 +16,9 @@ export const store = new Vuex.Store({
     login (state, user) {
       console.log(user)
       state.loggedIn = true
+      state.user.email = user.email
       state.user.thumbnail = user.thumbnail
       state.user.name = user.name
-      state.user.email = user.email
       console.log(state.user)
     },
     logout (state){
