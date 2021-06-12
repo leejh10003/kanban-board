@@ -13,7 +13,7 @@
         <vs-input v-model="newBoardTitle" placeholder="새 보드 제목"/>
         <div style="display: flex; align-items: center;"><h4 style="text-align: left;">관리자</h4> 
           <vs-tooltip>
-            {{`${$store.state.thumbnail} ${$store.state.name} ${$store.state.email}`}}
+            {{`${$store} ${$store.state.name} ${$store.state.email}`}}
             <md-icon style="margin: 0px; margin-left: 8px;">help_outline</md-icon>
             <template #tooltip>
               해당 보드에 관한 모든 권한을 갖습니다. 보드를 생성하신 사용자님은 기본적으로 관리자입니다.
