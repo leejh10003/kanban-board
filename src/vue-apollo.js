@@ -17,11 +17,16 @@ import jwtDecode from 'jwt-decode'
 Vue.use(VueApollo)
 
 export const refreshToken = async function(){
-  const { data : { token } } = await axios.post('https://trello.jeontuk-11.link/refresh')
-  localStorage.setItem('token', token)
-  const user = jwtDecode(token)
-  store.commit('login', user)
-  return token
+  try{
+    const { data : { token } } = await axios.post('https://trello.jeontuk-11.link/refresh')
+    localStorage.setItem('token', token)
+    const user = jwtDecode(token)
+    store.commit('login', user)
+    return token
+  } catch {
+    localStorage.removeItem('token')
+    store.commit('logout')
+  }
 }
 
 const authLink = setContext(async(_, { headers }) => {
@@ -33,9 +38,6 @@ const authLink = setContext(async(_, { headers }) => {
     var applyToken
     if (!token || new Date((JSON.parse(atob(token.split('.')[1])).exp - 15) * 1000) < Date.now()) {
       applyToken = await refreshToken()
-    } else {
-      applyToken = token
-      store.commit('logout')
     }
     return {
       headers: {
