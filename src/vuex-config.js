@@ -14,11 +14,13 @@ export const store = new Vuex.Store({
   },
   mutations: {
     login (state, user) {
+      console.log(user)
       const { name, thumbnail, email } = user
       state.loggedIn = true
       state.user.thumbnail = thumbnail
       state.user.name = name
       state.user.email = email
+      console.log(state)
     },
     logout (state){
       state.loggedIn = false
