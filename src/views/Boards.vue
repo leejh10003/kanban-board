@@ -22,6 +22,7 @@
             <vs-tooltip>
               <vs-avatar>
                 <template #text>
+                  {{currentUser.name}}
                   {{getInitial(currentUser.name)}}
                 </template>
               </vs-avatar>
