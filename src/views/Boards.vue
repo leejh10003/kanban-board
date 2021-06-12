@@ -19,7 +19,6 @@
             </template>
           </vs-tooltip></div>
           <div style="display: flex">
-            {{currentUser.name}}
             <vs-tooltip>
               <vs-avatar>
                 <template #text>
@@ -90,6 +89,7 @@ export default {
   },
   methods: {
     getInitial(name){
+      console.log(this.currentUser)
       return name.split(' ').map((part) => part.charAt(0)).slice(0, 2).join()
     },
     splitTwo(list){
