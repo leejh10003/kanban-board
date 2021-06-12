@@ -23,7 +23,7 @@ export default {
       loading.changeText(newUser ? '회원 가입이 완료되었습니다!' : '로그인 되었습니다!')
       localStorage.setItem('token', token)
       const info = jwtDecode(token)
-      console.log(info)
+      this.$store.commit('login', info)
       await new Promise(resolve => setTimeout(resolve, 1000))
       this.$router.push('/boards')
       loading.close()
