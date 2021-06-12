@@ -23,11 +23,13 @@
               <template #tooltip>
                 {{currentUser.name}}
               </template>
-              <vs-avatar>
-                <template v-if="currentUser.thumbnail === null" #text>
+              <vs-avatar v-if="currentUser.thumbnail === null">
+                <template #text>
                   {{getInitial(currentUser.name)}}
                 </template>
-                <img v-else :src="currentUser.thumbnail" alt="">
+              </vs-avatar>
+              <vs-avatar v-else>
+                <img :src="currentUser.thumbnail" alt=""/>
               </vs-avatar>
             </vs-tooltip>
           </div>
