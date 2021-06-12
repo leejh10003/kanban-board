@@ -18,7 +18,10 @@ Vue.use(VueApollo)
 
 export const refreshToken = async function(){
   const { data : { token } } = await axios.post('https://trello.jeontuk-11.link/refresh')
-  store.commit('login', jwtDecode(token))
+  localStorage.setItem('token', token)
+  const user = jwtDecode(token)
+  console.log('refresh', user)
+  store.commit('login', user)
   return token
 }
 
@@ -26,6 +29,7 @@ const authLink = setContext(async(_, { headers }) => {
   try {
     const token = localStorage.getItem('token')
     if (store.state.loggedIn === false){
+      console.log('initial commit')
       store.commit('login', jwtDecode(token))
     }
     var applyToken
