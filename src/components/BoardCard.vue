@@ -1,25 +1,23 @@
 <template>
-  <div>
-    <card
-      v-on:click.native="toBoard(board.id)"
-      >
-        <template #title>
-          <h3 class="board-title">{{board.name}}</h3>
-        </template>
-        <template #tailing>
-          <div class="tailing-users">
-            <div
-              class="user-entities"
-              v-for="(entity, index) in mapUsers(board.boards_users, board.boards_users_aggregate.aggregate.count)"
-              :key="`${board.id}-${entity.id}`">
-                <div class="user-entity" v-if="entity.type === 'thumbnail'" :src="entity.value" :style="{zIndex: index, backgroundImage: `url(${entity.value})`, backgroundSize: 'cover'}"/>
-                <div class="user-entity user-text" v-else-if="entity.type === 'name'" >{{entity.id}}</div>
-                <div class="user-entity user-left" v-else>{{entity.value}}</div>
-            </div>
+  <card
+    v-on:click.native="toBoard(board.id)"
+    >
+      <template #title>
+        <h3 class="board-title">{{board.name}}</h3>
+      </template>
+      <template #tailing>
+        <div class="tailing-users">
+          <div
+            class="user-entities"
+            v-for="(entity, index) in mapUsers(board.boards_users, board.boards_users_aggregate.aggregate.count)"
+            :key="`${board.id}-${entity.id}`">
+              <div class="user-entity" v-if="entity.type === 'thumbnail'" :src="entity.value" :style="{zIndex: index, backgroundImage: `url(${entity.value})`, backgroundSize: 'cover'}"/>
+              <div class="user-entity user-text" v-else-if="entity.type === 'name'" >{{entity.id}}</div>
+              <div class="user-entity user-left" v-else>{{entity.value}}</div>
           </div>
-        </template>
-      </card>
-  </div>
+        </div>
+      </template>
+    </card>
 </template>
 <script>
 import card from './Card.vue'

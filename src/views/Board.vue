@@ -5,49 +5,54 @@
       <div class="list-for" v-for="(list, index) in lists" :key="index">
         <div class="list-container">
           <div class="col-3">
-            <h4 class="column-name">{{ list.name }}</h4>
-            <vs-button
-              v-if="list.adding === false"
-              :active="true"
-              @click="list.adding = true"
-            >
-              Add
-            </vs-button>
-            <div v-if="list.adding === true">
-              <template>
-                <div slot="header">
+            <div style="display: flex; align-items: baseline">
+              <h4 class="column-name">{{ list.name }}</h4>
+              <vs-button
+                style="margin-left: auto"
+                v-if="list.adding === false"
+                :active="true"
+                @click="list.adding = true"
+              >
+                Add
+              </vs-button>
+            </div>
+            <div class="list-card">
+              <card v-if="list.adding === true">
+                <template #hero>
                   <img :src="''" alt="" />
-                </div>
-                <div>
+                </template>
+                <template #body>
                   <vs-input
                     type="text"
                     v-model="list.addContent"
-                    label="내용"
+                    placeholder="내용"
                   />
+                </template>
+                <template #tailing>
+                  <div style="display: flex; justify-content: flex-end;">
+                    <vs-button
+                      type="filled"
+                      color="primary"
+                      v-on:click="addCard(list.id, list.addContent)"
+                    >
+                      추가
+                    </vs-button>
+                    <vs-button
+                      type="filled"
+                      color="danger"
+                      v-on:click="list.adding = false"
+                    >
+                      취소
+                    </vs-button>
+                  </div>
+                </template>
+              </card>
+              <draggable class="list-group " :list="list.cards" group="card">
+                <div v-for="element in list.cards" :key="element.id">
+                  <Task v-bind:element="{ ...element }" />
                 </div>
-                <div>
-                  <vs-button
-                    type="filled"
-                    color="primary"
-                    v-on:click="addCard(list.id, list.addContent)"
-                  >
-                    추가
-                  </vs-button>
-                  <vs-button
-                    type="filled"
-                    color="danger"
-                    v-on:click="list.adding = false"
-                  >
-                    취소
-                  </vs-button>
-                </div>
-              </template>
+              </draggable>
             </div>
-            <draggable class="list-group list-card" :list="list.cards" group="card">
-              <div v-for="element in list.cards" :key="element.id">
-                <Task v-bind:element="{ ...element }" />
-              </div>
-            </draggable>
           </div>
         </div>
       </div>
@@ -132,12 +137,14 @@
 import draggable from "vuedraggable";
 import gql from "graphql-tag";
 import Task from "../components/Task";
+import card from '../components/Card.vue'
 
 export default {
   name: "two-lists",
   display: "Two Lists",
   order: 1,
   components: {
+    card,
     draggable,
     Task,
   },

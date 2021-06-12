@@ -4,7 +4,7 @@
       <img class="hero" v-if="!!element.created_by && !!element.created_by.thumbnail" :src="element.created_by.thumbnail" />
     </template>
     <template #title>
-      <h3>{{getTitle(element)}}</h3>
+      <h3 style="margin: 0px">{{getTitle(element)}}</h3>
     </template>
     <template #body>
       <div v-for="(paragraph, index) in element.card_descriptions" :key="index">
@@ -23,6 +23,11 @@
     </template>
   </Card>
 </template>
+<style>
+.post-description{
+  margin: 0px
+}
+</style>
 <script>
 import Card from './Card.vue'
 export default {
