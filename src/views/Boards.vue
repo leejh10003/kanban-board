@@ -19,10 +19,7 @@
             </template>
           </vs-tooltip></div>
           <div class="users">
-            <vs-tooltip class="user-avatar" >
-              <template #tooltip>
-                {{currentUser.name}}(기본)
-              </template>
+            <div class="user-avatar">
               <vs-avatar v-if="currentUser.thumbnail === null">
                 <template #text>
                   {{getInitial(currentUser.name)}}
@@ -31,27 +28,36 @@
               <vs-avatar v-else>
                 <img :src="currentUser.thumbnail" alt=""/>
               </vs-avatar>
-            </vs-tooltip>
-            <vs-tooltip v-for="user in admins" :key="user.id" class="user-avatar" >
-              <template #tooltip>
-                {{user.name}}
-              </template>
-              <vs-avatar v-if="user.thumbnail === null">
+            </div>
+            <div v-for="(user, index) in admins" :key="user.id" class="user-avatar" style="position: relative; height: 44px; width: 44px;">
+              <vs-avatar style="position: absolute;" v-if="user.thumbnail === null">
                 <template #text>
                   {{getInitial(user.name)}}
                 </template>
               </vs-avatar>
-              <vs-avatar v-else>
+              <vs-avatar style="position: absolute;" v-else>
                 <img :src="user.user" alt=""/>
               </vs-avatar>
-            </vs-tooltip>
+              <vs-button
+                @click.stop="deleteUser('admin', index)"
+                @mouseenter.stop
+                size="mini"
+                style="position: absolute; top: -8px; right: -10px; height: 16px; width: 16px"
+                circle
+                icon
+                danger
+                floating
+              >
+                <i class='bx bx-x' ></i>
+              </vs-button>
+            </div>
           </div>
           <el-autocomplete
             class="inline-input"
             v-model="newAdminQuery"
             :fetch-suggestions="querySearch"
-            placeholder="새 관리자 이름..."
-            @select="handleSelectAdmin"
+            placeholder="새 관리자 검색..."
+            @select="(value) => handleSelect(value, 'admin')"
           />
         <div style="display: flex; align-items: center;"><h4 style="text-align: left;">참여자</h4> 
           <vs-tooltip>
@@ -60,21 +66,48 @@
               해당 보드에 관한 일부 권한을 갖습니다. 보드 삭제, 칼럼 이름 변경 등이 제한됩니다.
             </template>
           </vs-tooltip></div>
-      </div>
-
-      <!--
-
-      <template #footer>
-        <div class="footer-dialog">
-          <vs-button block>
-            Sign In
-          </vs-button>
-
-          <div class="new">
-            New Here? <a href="#">Create New Account</a>
+          <div class="users">
+            <div v-for="(user, index) in participants" :key="user.id" style="position: relative; height: 44px; width: 44px;">
+              <vs-avatar style="position: absolute;"  v-if="user.thumbnail === null">
+                <template #text>
+                  {{getInitial(user.name)}}
+                </template>
+              </vs-avatar>
+              <vs-avatar style="position: absolute;" v-else>
+                <img :src="user.user" alt=""/>
+              </vs-avatar>
+              <vs-button
+                @click.stop="deleteUser('participants', index)"
+                @mouseenter.stop
+                size="mini"
+                style="position: absolute; top: -8px; right: -10px; height: 16px; width: 16px"
+                circle
+                icon
+                danger
+                floating
+              >
+                <i class='bx bx-x' ></i>
+              </vs-button>
+            </div>
           </div>
+          <el-autocomplete
+            class="inline-input"
+            v-model="newParticipantsQuery"
+            :fetch-suggestions="querySearch"
+            placeholder="새 참여자 검색..."
+            @select="(value) => handleSelect(value, 'participants')"
+          />
+      </div>
+      <template #footer>
+        <div class="con-footer">
+          <vs-button @click="insertBoard" transparent>
+            Ok
+          </vs-button>
+          <vs-button @click="addNewCard=false" dark transparent>
+            Cancel
+          </vs-button>
         </div>
-      </template>-->
+      </template>
     </vs-dialog>
     <vs-row v-for="(row, index) in splitTwo(boards)" :key="`row${index}`" vs-justify="center">
       <vs-col vs-type="flex" vs-justify="center" vs-align="center" :lg="row.length === 1 ? 4 : 2" :sm="1" :xs="0">
@@ -93,6 +126,11 @@
   </div>
 </template>
 <style>
+.con-footer{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
 #create-board{
   position: absolute;
   bottom: 30px;
@@ -107,6 +145,7 @@
 }
 .users{
   display: flex;
+  min-height: 60px;
   max-width: 368px;
   flex-wrap: wrap;
 }
@@ -127,19 +166,47 @@ export default {
     }
   },
   methods: {
+    async insertBoard(){
+      this.addNewCard = false
+      const admins = [{id: this.currentUser.id}].concat(this.admins).map((admin) => admin.id)
+      const participants = this.participants.map((user) => user.id)
+      const name = this.newBoardTitle
+      const { data : { insert_boards_one: { id } } } = await this.$apollo.mutate({
+        variables: {
+          admins,
+          participants,
+          name
+        },
+        mutation: gql`mutation($admins: jsonb!, $participants: jsonb!, $name: String!){
+          insert_boards_one(object: {admins: $admins, participants: $participants, name: $name}){
+            id
+          }
+        }`
+      })
+      this.$router.push(`/board/${id}`)
+    },
     getInitial(name){
-      console.log(this.currentUser)
       return name.split(' ').map((part) => part.charAt(0)).slice(0, 2).join()
     },
-    handleSelectAdmin(value){
-      this.newAdminQuery = ''
-      this.admins.push(value)
+    deleteUser(kind, index){
+      (kind === 'admin' ? this.admins : this.participants)[index].deleted = true;
+      (kind === 'admin' ? this.admins : this.participants).splice(index, 1)
+      console.log(index, kind, this.admins, this.participants)
     },
-    async querySearch(queryString, callback){//eslint-disable-line no-unused-vars
+    handleSelect(value, kind){
+      if (kind === 'admin'){
+        this.newAdminQuery = ''
+        this.admins.push(value)
+      } else {
+        this.newParticipantsQuery = ''
+        this.participants.push(value)
+      }
+    },
+    async querySearch(queryString, callback){
       const { data: { user } } = await this.$apollo.query({
         variables: {
           queryString: `%${queryString}%`,
-          ids: [].concat(this.participants).concat(this.admins).map((user) => user.id)
+          ids: [{id: this.currentUser.id}].concat(this.participants).concat(this.admins).map((user) => user.id)
         },
         query: gql`query($ids:[Int!]!, $queryString: String!) {
           user(where: {id: {_nin: $ids}, _or: [{name: {_ilike: $queryString}}, {email: {_ilike: $queryString}}]}, limit: 3){
@@ -178,6 +245,7 @@ export default {
   data: function(){
     return {
       newAdminQuery: '',
+      newParticipantsQuery: '',
       loading: null,
       addNewCard: false,
       newBoardTitle: '',

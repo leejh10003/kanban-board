@@ -11,6 +11,7 @@ import 'vue-material/dist/theme/default.css'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import locale from 'element-ui/lib/locale/lang/ko'
+import 'boxicons/css/boxicons.min.css'
 
 Vue.use(ElementUI, {locale});
 
