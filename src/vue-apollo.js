@@ -26,10 +26,11 @@ export const refreshToken = async function(){
     return result.data.token
   } catch(e) {
     console.error(e)
-    console.log(Vue.prototype.$vs)
+    console.log(Vue.prototype.$vs.loading().close())
     localStorage.removeItem('token')
     store.commit('logout')
     router.push('/naverAuth')
+    throw e
   }
 }
 
