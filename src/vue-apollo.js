@@ -30,7 +30,7 @@ export const getToken = async function(){
     return applyToken
   } catch(e) {
     localStorage.removeItem('token')
-    console.log('beforeCommit')
+    console.log('beforeCommit', store)
     store.commit('logout')
     console.log('beforePush')
     Vue.prototype.$router.push('/naverAuth')
