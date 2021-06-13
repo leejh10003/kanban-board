@@ -52,6 +52,8 @@ const authLink = setContext(async(_, { headers }) => {
     }
   } catch (e) {
     localStorage.removeItem('token')
+    console.log('no token')
+    router.push('/naverAuth')
   }
 })
 
