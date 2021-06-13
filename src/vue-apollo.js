@@ -30,13 +30,13 @@ export const refreshToken = async function(){
 }
 
 const authLink = setContext(async(_, { headers }) => {
+  console.log('authlink called')
   try {
     const token = localStorage.getItem('token')
     if (store.state.loggedIn === false){
       store.commit('login', jwtDecode(token))
     }
     var applyToken
-    console.log('authlink called')
     if (!token || new Date((JSON.parse(atob(token.split('.')[1])).exp - 15 * 60 * 1000)) < Date.now()) {
       applyToken = await refreshToken()
     } else {
