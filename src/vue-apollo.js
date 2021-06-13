@@ -41,7 +41,10 @@ const authLink = setContext(async(_, { headers }) => {
     }
     var applyToken
     if (!token || new Date((JSON.parse(atob(token.split('.')[1])).exp - 15 * 60 * 1000)) < Date.now()) {
+      console.log('refreshing')
       applyToken = await refreshToken()
+    } else {
+      console.log('not refreshing')
     }
     return {
       headers: {
@@ -51,6 +54,7 @@ const authLink = setContext(async(_, { headers }) => {
     }
   } catch (e) {
     localStorage.removeItem('token')
+    console.error(e)
     console.log('no token')
     router.push('/naverAuth')
   }
