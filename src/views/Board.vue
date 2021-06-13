@@ -8,7 +8,7 @@
             <div style="display: flex; align-items: baseline">
               <h4 @click="list.fixingTitle = true" class="column-name" v-if="list.fixingTitle === false">{{ list.name }}</h4>
               <input @keydown.enter="fixListTitle(list)" v-else v-model="list.name" class="column-name" placeholder="제목"/>
-              <span @click="list.fixingPercentage = true" class="progress" v-if="list.fixingPercentage === false">진척도: {{ list.percentage_progress }}</span>
+              <span @click="list.fixingPercentage = true" style="color: #7f7f7f" class="progress" v-if="list.fixingPercentage === false">진척도 {{ list.percentage_progress }}</span>
               <input type="number" @keydown.enter="fixPercentage(list)" class="progress" v-else v-model="list.percentage_progress" placeholder="진척도"/>
               <vs-button
                 circle
