@@ -16,23 +16,25 @@ export default {
       this.$router.push('/naverAuth')
     }
   },
-  boards_progress: {
-    variables(){
-      return {
-        id: this.$store.state.id
-      }
-    },
-    query: gql`query ($id: Int!) {
-      boards_progress(where: {user_id: {_eq: $id}}) {
-        progress
-        finished_num
-        card_num
-        board{
-          name
-          id
+  apollo: {
+    boards_progress: {
+      variables(){
+        return {
+          id: this.$store.state.id
         }
-      }
-    }`
+      },
+      query: gql`query ($id: Int!) {
+        boards_progress(where: {user_id: {_eq: $id}}) {
+          progress
+          finished_num
+          card_num
+          board{
+            name
+            id
+          }
+        }
+      }`
+    }
   }
 }
 </script>
