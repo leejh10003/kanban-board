@@ -15,12 +15,10 @@ Vue.use(VueApollo)
 
 export const getToken = async function(){
   try{
-    console.log('getToken')
     const currentToken = localStorage.getItem('token')
     var applyToken
     if (!currentToken || Date(jwtDecode(currentToken)) < Date.new()){
       const result = await axios.post('https://trello.jeontuk-11.link/refresh')
-      console.log(result)
       applyToken = result.data.token
     } else {
       applyToken = currentToken
@@ -31,12 +29,9 @@ export const getToken = async function(){
     return applyToken
   } catch(e) {
     localStorage.removeItem('token')
-    console.log('beforeCommit', store)
     store.commit('logout')
-    console.log('beforePush')
-    console.log(Vue.prototype)
     router.push('/naverAuth')
-    console.log('push route success')
+    console.log('push route success', e)
     throw e
   }
 }

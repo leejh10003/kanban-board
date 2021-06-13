@@ -188,7 +188,6 @@ export default {
     deleteUser(kind, index){
       (kind === 'admin' ? this.admins : this.participants)[index].deleted = true;
       (kind === 'admin' ? this.admins : this.participants).splice(index, 1)
-      console.log(index, kind, this.admins, this.participants)
     },
     handleSelect(value, kind){
       if (kind === 'admin'){

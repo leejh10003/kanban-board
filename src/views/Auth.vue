@@ -28,8 +28,8 @@ export default {
       this.$router.push('/boards')
       loading.close()
     } catch (e){
-      console.error(e)
       loading.close()
+      console.error('login failed', e)
       this.$router.push('/naverAuth')
     }
   }
