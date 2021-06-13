@@ -18,8 +18,10 @@ export default {
   },
   apollo: {
     boards: {
-      variables: {
-        id: this.$store.state.id
+      variables(){
+        return {
+          id: this.$store.state.id
+        }
       },
       query: gql`query($id: Int!){
         boards(where: {boards_users: {id: {_eq: $id}}}) {
