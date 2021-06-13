@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
-import { setContext } from '@apollo/client/link/context'
+//import { setContext } from '@apollo/client/link/context'
 import { split } from 'apollo-link'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
@@ -11,6 +11,8 @@ import axios from 'axios'
 import { store } from './vuex-config'
 import jwtDecode from 'jwt-decode'
 import router from './router'
+import { ApolloLink } from '@apollo/client';
+import { from } from 'core-js/library/js/array'
 Vue.use(VueApollo)
 
 export const refreshToken = async function(){
@@ -28,10 +30,10 @@ export const refreshToken = async function(){
   }
 }
 
-const authLink = setContext(async(_, { headers }) => {
+const authMiddleware = new ApolloLink(async (operation, forward) => {
   console.log('authlink called')
+  const token = localStorage.getItem('token')
   try {
-    const token = localStorage.getItem('token')
     if (store.state.loggedIn === false){
       store.commit('login', jwtDecode(token))
     }
@@ -41,12 +43,12 @@ const authLink = setContext(async(_, { headers }) => {
     } else {
       console.log(new Date((JSON.parse(atob(token.split('.')[1])).exp - 15 * 60 * 1000)), Date.now())
     }
-    return {
+    operation.setContext({
       headers: {
-        ...headers,
-        authorization: `Bearer ${applyToken}`
+        Authorization: `Bearer ${applyToken}`
       }
-    }
+    })
+    return forward(operation)
   } catch (e) {
     localStorage.removeItem('token')
     console.error(e)
@@ -88,7 +90,7 @@ const link = split(
 
 // Create the apollo client
 const apolloClient = new ApolloClient({
-  link: authLink.concat(link),
+  link: from([authMiddleware, link]),
   cache: new InMemoryCache(),
   connectToDevTools: true,
 })
