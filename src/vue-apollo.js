@@ -19,8 +19,9 @@ export const getToken = async function(){
     const currentToken = localStorage.getItem('token')
     var applyToken
     if (!currentToken || Date(jwtDecode(currentToken)) < Date.new()){
-      const { data: { token } } = await axios.post('https://trello.jeontuk-11.link/refresh')
-      applyToken = token
+      const result = await axios.post('https://trello.jeontuk-11.link/refresh')
+      console.log(result)
+      applyToken = result.data.token
     } else {
       applyToken = currentToken
     }
