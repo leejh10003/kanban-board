@@ -23,23 +23,17 @@ export default {
           id: this.$store.state.id
         }
       },
-      query: gql`query($id: Int!){
-        boards(where: {boards_users: {id: {_eq: $id}}}) {
-          id
-          name
-          progress(where: {user_id: {_eq: $id}}) {
-            board_id
-            progress
-            column {
-              name
-            }
-            finished_num
-            column_id
-            card_num
+      query: gql`query ($id: Int!) {
+        boards_progress(where: {user_id: {_eq: $id}}) {
+          progress
+          finished_num
+          card_num
+          board{
+            name
+            id
           }
         }
-      }
-      `
+      }`
     }
   }
 }
