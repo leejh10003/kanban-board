@@ -12,9 +12,7 @@ import gql from 'graphql-tag'
 export default {
   async beforeCreate(){
     await getToken();
-    if (this.$store.state.loggedIn){
-      this.$router.push('/boards')
-    } else {
+    if (!this.$store.state.loggedIn){
       this.$router.push('/naverAuth')
     }
   },
