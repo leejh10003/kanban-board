@@ -15,6 +15,7 @@ import router from './router'
 Vue.use(VueApollo)
 
 export const refreshToken = async function(){
+  console.log(Vue.prototype.$vs)
   try{
     console.log('token refreshing')
     const { data : { token } } = await axios.post('https://trello.jeontuk-11.link/refresh')
