@@ -17,24 +17,22 @@ export default {
     }
   },
   boards_progress: {
-    boards: {
-      variables(){
-        return {
-          id: this.$store.state.id
+    variables(){
+      return {
+        id: this.$store.state.id
+      }
+    },
+    query: gql`query ($id: Int!) {
+      boards_progress(where: {user_id: {_eq: $id}}) {
+        progress
+        finished_num
+        card_num
+        board{
+          name
+          id
         }
-      },
-      query: gql`query ($id: Int!) {
-        boards_progress(where: {user_id: {_eq: $id}}) {
-          progress
-          finished_num
-          card_num
-          board{
-            name
-            id
-          }
-        }
-      }`
-    }
+      }
+    }`
   }
 }
 </script>
