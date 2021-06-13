@@ -231,6 +231,9 @@ export default {
   components: {
     'board-card': BoardCard
   },
+  beforeDestroy(){
+    this.loading.close()
+  },
   mounted(){
     this.loading = this.$vs.loading({
       type: 'corners',
