@@ -15,18 +15,13 @@ import router from './router'
 Vue.use(VueApollo)
 
 export const refreshToken = async function(){
-  console.log(Vue.prototype.$vs)
   try{
-    console.log('token refreshing')
     const result  = await axios.post('https://trello.jeontuk-11.link/refresh')
     localStorage.setItem('token', result.data.token)
     const user = jwtDecode(result.data.token)
     store.commit('login', user)
-    console.log((JSON.parse(atob(result.data.token.split('.')[1])).exp - 15 * 60 * 1000), Date.now())
     return result.data.token
   } catch(e) {
-    console.error(e)
-    console.log(Vue.prototype.$vs.loading().close())
     localStorage.removeItem('token')
     store.commit('logout')
     router.push('/naverAuth')
@@ -42,10 +37,9 @@ const authLink = setContext(async(_, { headers }) => {
     }
     var applyToken
     if (!token || new Date((JSON.parse(atob(token.split('.')[1])).exp - 15 * 60 * 1000)) < Date.now()) {
-      console.log('refreshing')
       applyToken = await refreshToken()
     } else {
-      console.log('not refreshing')
+      console.log(new Date((JSON.parse(atob(token.split('.')[1])).exp - 15 * 60 * 1000)), Date.now())
     }
     return {
       headers: {
@@ -56,7 +50,6 @@ const authLink = setContext(async(_, { headers }) => {
   } catch (e) {
     localStorage.removeItem('token')
     console.error(e)
-    console.log('no token')
     router.push('/naverAuth')
   }
 })
