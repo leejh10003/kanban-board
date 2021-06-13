@@ -33,6 +33,7 @@ export const getToken = async function(){
     console.log('beforeCommit', store)
     store.commit('logout')
     console.log('beforePush')
+    console.log(Vue.prototype)
     Vue.prototype.$router.push('/naverAuth')
     console.log('push route success')
     throw e
