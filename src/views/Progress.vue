@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{boards}}
+    {{boards_progress}}
   </div>
 </template>
 <style>
@@ -16,7 +16,7 @@ export default {
       this.$router.push('/naverAuth')
     }
   },
-  apollo: {
+  boards_progress: {
     boards: {
       variables(){
         return {
