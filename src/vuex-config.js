@@ -6,21 +6,18 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     loggedIn: false,
-    user: {
-      thumbnail: null,
-      name: null,
-      email: null
-    }
+    thumbnail: null,
+    name: null,
+    email: null,
+    id: null,
   },
   mutations: {
     login (state, user) {
-      console.log(user)
-      const { name, thumbnail, email } = user
       state.loggedIn = true
-      state.user.thumbnail = thumbnail
-      state.user.name = name
-      state.user.email = email
-      console.log(state)
+      state.email = user.email
+      state.name = user.name
+      state.thumbnail = user.thumbnail
+      state.id = parseInt(user["https://hasura.io/jwt/claims"]['x-hasura-user-id'])
     },
     logout (state){
       state.loggedIn = false
