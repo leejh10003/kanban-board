@@ -17,13 +17,17 @@ export const getToken = async function(){
   try{
     console.log('getToken')
     const currentToken = localStorage.getItem('token')
+    var applyToken
     if (!currentToken || Date(jwtDecode(currentToken)) < Date.new()){
       const { data: { token } } = await axios.post('https://trello.jeontuk-11.link/refresh')
-      localStorage.setItem('token', token)
-      return token
+      applyToken = token
     } else {
-      return currentToken
+      applyToken = currentToken
     }
+    if (!store.state.loggedIn){
+      store.commit('login', jwtDecode(applyToken))
+    }
+    return applyToken
   } catch(e) {
     localStorage.removeItem('token')
     store.commit('logout')
@@ -33,16 +37,12 @@ export const getToken = async function(){
 }
 
 const authLink = setContext(async(_, { headers }) => {
-  try {
-    const applyToken = await getToken()
-    return {
-      headers: {
-        ...headers,
-        Authorization: `Bearer ${applyToken}`
-      }
+  const applyToken = await getToken()
+  return {
+    headers: {
+      ...headers,
+      Authorization: `Bearer ${applyToken}`
     }
-  } catch (e) {
-    localStorage.removeItem('token')
   }
 })
 
