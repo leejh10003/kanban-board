@@ -8,6 +8,11 @@
 </template>
 <script>
 export default {
+  beforeCreate(){
+    if (this.$store.state.loggedIn){
+      this.$router.push('/boards')
+    }
+  },
   methods:{             
     naverlogin(){
       var url = 'https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=2vi6TcRBTGxoSlFsO_v1&redirect_uri=https%3A%2F%2Ftrello.jeontuk-11.link%2F%23%2Fauth&state=1234';
