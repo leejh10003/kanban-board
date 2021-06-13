@@ -18,7 +18,11 @@
     <template #tailing>
       <div class="post-author">
         <md-chip v-for="(tag, index) in tags" :key="tag.id" md-deletable @md-delete="removeTagHandler(tag.id, index)">{{ tag.tag }}</md-chip>
-        <md-autocomplete v-model="newTagName" :md-options="[newTagName, ...fullTagNames]" @md-selected="insertTagHandler">
+        <md-button class="md-icon-button md-dense" @click="isAddingTag = !isAddingTag">
+          <md-icon v-if="isAddingTag === false">add</md-icon>
+          <md-icon v-else>check</md-icon>
+        </md-button>
+        <md-autocomplete v-if="isAddingTag === true" v-model="newTagName" :md-options="[newTagName, ...fullTags]" @md-selected="insertTagHandler">
           <template slot="md-autocomplete-item" slot-scope="{ item, term }">
             <md-highlight-text v-if="item.tag != null" :md-term="term">{{ item.tag }}</md-highlight-text>
             <div v-else class="autocomplete-create-new-item">
@@ -47,8 +51,9 @@ export default {
   data() {
     return {
       active: false,
+      isAddingTag: false,
       tags: [],
-      fullTagNames: [],
+      fullTags: [],
       newTagName: "",
       newTags: [],
     };
@@ -57,7 +62,9 @@ export default {
     this.$data.tags = this.$props.element.card_taggings != null ? this.$props.element.card_taggings.map((e) => {
       return e.tag;
     }) : [];
-    this.$data.fullTagNames = this.$props.tagList != null ? this.$props.tagList.map((e) => {
+    this.$data.fullTags = this.$props.tagList != null ? this.$props.tagList.filter((e) => {
+      return !this.$data.tags.find(t => t.id == e.id);
+    }).map((e) => {
       return {
         ...e,
         'toLowerCase': () => e.tag.toLowerCase()
@@ -156,8 +163,12 @@ export default {
         tag: newTagName
       });
 
-      await this.addCardTag(newTagId, this.$props.element.id);
+      this.$data.fullTags = this.$data.fullTags.filter(e => {
+        return e.id != newTagId;
+      })
 
+      this.$data.newTagName = "";
+      await this.addCardTag(newTagId, this.$props.element.id);
       this.$data.newTagName = "";
     },
     removeTagHandler: async function (tagId, index) {
