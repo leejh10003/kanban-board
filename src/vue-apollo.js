@@ -12,7 +12,7 @@ import { store } from './vuex-config'
 import jwtDecode from 'jwt-decode'
 import router from './router'
 import { ApolloLink } from '@apollo/client';
-import { from } from 'core-js/library/js/array'
+import from from 'core-js/features/array/from';
 Vue.use(VueApollo)
 
 export const refreshToken = async function(){
