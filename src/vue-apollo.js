@@ -12,9 +12,6 @@ import axios from 'axios'
 import { store } from './vuex-config'
 import jwtDecode from 'jwt-decode'
 import router from './router'
-// import { Auth } from 'aws-amplify'
-
-// Install the vue plugin
 Vue.use(VueApollo)
 
 export const refreshToken = async function(){
@@ -28,6 +25,7 @@ export const refreshToken = async function(){
     return token
   } catch(e) {
     console.error(e)
+    console.log(Vue.prototype.$vs)
     localStorage.removeItem('token')
     store.commit('logout')
     router.push('/naverAuth')
