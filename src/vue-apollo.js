@@ -30,6 +30,7 @@ export const getToken = async function(){
     }
     return applyToken
   } catch(e) {
+    console.error('error')
     localStorage.removeItem('token')
     store.commit('logout')
     router.push('/naverAuth')
