@@ -17,13 +17,29 @@
     </template>
     <template #tailing>
       <div class="post-author">
-        <md-chips v-model="tags" md-placeholder="Add Tag" @md-insert="insertTagHandler" @md-delete="removeTagHandler">
-        </md-chips>
+        <md-chip v-for="(tag, index) in tags" :key="tag.id" md-deletable @md-delete="removeTagHandler(tag.id, index)">{{ tag.tag }}</md-chip>
+        <md-button class="md-icon-button md-dense" @click="isAddingTag = !isAddingTag">
+          <md-icon v-if="isAddingTag === false">add</md-icon>
+          <md-icon v-else>check</md-icon>
+        </md-button>
+        <md-autocomplete v-if="isAddingTag === true" v-model="newTagName" :md-options="[newTagName, ...fullTags]" @md-selected="insertTagHandler">
+          <template slot="md-autocomplete-item" slot-scope="{ item, term }">
+            <md-highlight-text v-if="item.tag != null" :md-term="term">{{ item.tag }}</md-highlight-text>
+            <div v-else class="autocomplete-create-new-item">
+              Create New Tag-<md-highlight-text  :md-term="term">{{ term }}</md-highlight-text>
+            </div>
+          </template>
+        </md-autocomplete>
+        <!-- <md-chips v-model="tags" md-placeholder="Add Tag" @md-insert="insertTagHandler" @md-delete="removeTagHandler"> -->
+        <!-- </md-chips> -->
       </div>
     </template>
   </Card>
 </template>
 <style>
+.autocomplete-create-new-item {
+  display: flex;
+}
 </style>
 <script>
 import Card from "./Card.vue";
@@ -35,15 +51,25 @@ export default {
   data() {
     return {
       active: false,
+      isAddingTag: false,
       tags: [],
+      fullTags: [],
       newTagName: "",
       newTags: [],
     };
   },
   created() {
-    this.$data.tags = this.$props.element.card_taggings.map((e) => {
-      return e.tag.tag;
-    });
+    this.$data.tags = this.$props.element.card_taggings != null ? this.$props.element.card_taggings.map((e) => {
+      return e.tag;
+    }) : [];
+    this.$data.fullTags = this.$props.tagList != null ? this.$props.tagList.filter((e) => {
+      return !this.$data.tags.find(t => t.id == e.id);
+    }).map((e) => {
+      return {
+        ...e,
+        'toLowerCase': () => e.tag.toLowerCase()
+      };
+    }) : [];
   },
   props: {
     element: Object,
@@ -115,25 +141,42 @@ export default {
       });
     },
     insertTagHandler: async function (newTag) {
-      const equalTag = this.$props.tagList.find(e => e.tag === newTag);
+      // const equalTag = this.$props.tagList.find(e => e.tag === newTag);
       let newTagId;
-      if (equalTag != null) {
-        newTagId = equalTag.id;
+      let newTagName;
+      // console.log(equalTag);
+      if (newTag.id != null) {
+        newTagId = newTag.id;
+        newTagName = newTag.tag;
       } else {
         newTagId = await this.addTag(newTag);
+        newTagName = newTag;
       }
 
       this.$data.newTags.push({
         id: newTagId,
-        tag: newTag
+        tag: newTagName
       });
 
+      this.$data.tags.push({
+        id: newTagId,
+        tag: newTagName
+      });
+
+      this.$data.fullTags = this.$data.fullTags.filter(e => {
+        return e.id != newTagId;
+      })
+
+      this.$data.newTagName = "";
       await this.addCardTag(newTagId, this.$props.element.id);
+      this.$data.newTagName = "";
     },
-    removeTagHandler: async function (tag) {
-      const equalTag = this.$props.tagList.find(e => e.tag === tag) || this.$data.newTags.find(e => e.tag === tag);
-      const tagId = equalTag.id;
+    removeTagHandler: async function (tagId, index) {
+      //const equalTag = this.$props.tagList.find(e => e.tag === tag) || this.$data.newTags.find(e => e.tag === tag);
+      //const tagId = equalTag.id;
       await this.removeCardTag(tagId, this.$props.element.id);
+      
+      this.$data.tags.splice(index, 1);
     }
   },
 };

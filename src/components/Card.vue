@@ -92,6 +92,8 @@ $shadow: rgba(0, 0, 0, 0.2);
   font-size: 0.875rem;
   line-height: 1;
   padding: 0 1rem 0.3rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
   // border-top: 0.0625rem solid $border;
 }
 </style>

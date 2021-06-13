@@ -198,6 +198,7 @@ export default {
       loading: null,
       addingColumn: false,
       addColumnTitle: "",
+      tags: []
     };
   },
   beforeDestroy: function(){
@@ -251,30 +252,13 @@ export default {
       `,
       update(data) {
         this.loading.close();
+        this.$data.tags = data.tag;
         return data.columns.map((e) => ({
           adding: false,
           addContent: "",
           fixingTitle: false,
           ...e,
         }));
-      },
-    },
-    tags: {
-      variables() {
-        return {
-          id: this.$route.params.id,
-        };
-      },
-      query: gql`
-        query ($id: Int!) {
-          tag(where: { board_id: { _eq: $id } }) {
-            id
-            tag
-          }
-        }
-      `,
-      update(data) {
-        return data.tag;
       },
     },
   },
