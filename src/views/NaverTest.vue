@@ -7,8 +7,10 @@
   </div>
 </template>
 <script>
+import { getToken } from '../vue-apollo'
 export default {
-  beforeCreate(){
+  async beforeCreate(){
+    await getToken();
     if (this.$store.state.loggedIn){
       this.$router.push('/boards')
     }
