@@ -11,6 +11,7 @@ import ApolloClient from "apollo-client";
 import axios from 'axios'
 import { store } from './vuex-config'
 import jwtDecode from 'jwt-decode'
+import router from './router'
 // import { Auth } from 'aws-amplify'
 
 // Install the vue plugin
@@ -27,6 +28,7 @@ export const refreshToken = async function(){
     console.error(e)
     localStorage.removeItem('token')
     store.commit('logout')
+    router.push('/naverAuth')
   }
 }
 
@@ -37,7 +39,7 @@ const authLink = setContext(async(_, { headers }) => {
       store.commit('login', jwtDecode(token))
     }
     var applyToken
-    if (!token || new Date((JSON.parse(atob(token.split('.')[1])).exp - 15) * 60 * 1000) < Date.now()) {
+    if (!token || new Date((JSON.parse(atob(token.split('.')[1])).exp - 15 * 60 * 1000)) < Date.now()) {
       applyToken = await refreshToken()
     }
     return {
