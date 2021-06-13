@@ -18,6 +18,9 @@ export default {
   },
   apollo: {
     boards: {
+      variables: {
+        id: this.$router.state.id
+      },
       query: gql`query($id: Int!){
         boards(where: {boards_users: {id: {_eq: $id}}}) {
           id
