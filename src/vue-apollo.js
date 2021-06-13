@@ -31,7 +31,6 @@ export const getToken = async function(){
     localStorage.removeItem('token')
     store.commit('logout')
     router.push('/naverAuth')
-    console.log('push route success', e)
     throw e
   }
 }

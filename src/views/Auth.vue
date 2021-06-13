@@ -29,7 +29,6 @@ export default {
       loading.close()
     } catch (e){
       loading.close()
-      console.error('login failed', e)
       this.$router.push('/naverAuth')
     }
   }
