@@ -13,6 +13,7 @@ export const store = new Vuex.Store({
   },
   mutations: {
     login (state, user) {
+      console.log(state)
       state.loggedIn = true
       state.email = user.email
       state.name = user.name
