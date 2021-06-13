@@ -10,6 +10,7 @@ import axios from 'axios'
 import jwtDecode from 'jwt-decode'
 import { store } from './vuex-config'
 import { setContext } from '@apollo/link-context'
+import router from './router'
 Vue.use(VueApollo)
 
 export const getToken = async function(){
@@ -34,7 +35,7 @@ export const getToken = async function(){
     store.commit('logout')
     console.log('beforePush')
     console.log(Vue.prototype)
-    Vue.prototype.$router.push('/naverAuth')
+    router.push('/naverAuth')
     console.log('push route success')
     throw e
   }
