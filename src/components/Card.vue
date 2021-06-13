@@ -72,7 +72,7 @@ $shadow: rgba(0, 0, 0, 0.2);
 
 .article-details {
   text-align: left;
-  margin: 10px;
+  margin: 10px 10px 0px 10px;
 }
 
 .post-title {
