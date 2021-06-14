@@ -87,6 +87,7 @@
                     v-bind:element="{ ...element }"
                     v-bind:refetch="refetch"
                     v-bind:tagList="tags"
+                    v-bind:users="users"
                   />
                 </div>
               </draggable>
@@ -225,6 +226,7 @@ export default {
       addingColumn: false,
       addColumnTitle: "",
       tags: [],
+      users: [],
     };
   },
   created() {
@@ -264,6 +266,13 @@ export default {
                   tag
                 }
               }
+              user_card_taggings {
+                user {
+                  id
+                  name
+                  thumbnail
+                }
+              }
               index
             }
           }
@@ -272,11 +281,19 @@ export default {
             id
             tag
           }
+
+          boards_user(where: { board_id: { _eq: $id } }) {
+            id
+            thumbnail
+            email
+            name
+          }
         }
       `,
       update(data) {
         this.loading.close();
         this.$data.tags = data.tag;
+        this.$data.users = data.boards_user;
         return data.columns.map((e) => ({
           adding: false,
           addContent: "",
