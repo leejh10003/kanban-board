@@ -21,8 +21,10 @@ export const store = new Vuex.Store({
     },
     logout (state){
       state.loggedIn = false
-      state.user.thumbnail = null,
-      state.user.name = null
+      state.thumbnail = null,
+      state.name = null
+      state.id = null
+      state.email = null
     }
   }
 })

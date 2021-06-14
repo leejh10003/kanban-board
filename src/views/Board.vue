@@ -229,6 +229,9 @@ export default {
       users: [],
     };
   },
+  beforeDestroy: function(){
+    this.loading.close()
+  },
   created() {
     this.loading = this.$vs.loading({
       type: "corners",

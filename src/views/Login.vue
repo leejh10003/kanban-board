@@ -40,22 +40,18 @@ export default {
   },
   methods: {
     async login() {
-      try {
-        const { data: { user : [{id}] } } = await this.$apollo.query({ //eslint-disable-line no-unused-vars
-          query: gql`query($username: String!, $password: String!){
-            user(where: {_and: [{username: {_eq: $username}}, {password: {_eq: $password}}]}){
-              id
-            }
-          }`,
-          variables: {
-            username: this.username,
-            password: this.password
+      const { data: { user : [{id}] } } = await this.$apollo.query({ //eslint-disable-line no-unused-vars
+        query: gql`query($username: String!, $password: String!){
+          user(where: {_and: [{username: {_eq: $username}}, {password: {_eq: $password}}]}){
+            id
           }
-        })
-        this.$router.push('/Secure')
-      } catch (e){
-        console.error(e)
-      }
+        }`,
+        variables: {
+          username: this.username,
+          password: this.password
+        }
+      })
+      this.$router.push('/Secure')
     },
   },
 }
