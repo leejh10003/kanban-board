@@ -5,7 +5,7 @@
       <router-link to="/about">About</router-link>
     </div>-->
 
-    <vs-navbar :fixed="true" style="position: relative;" color="#7d33ff" text-white square center-collapsed v-model="active">
+    <!-- <vs-navbar :fixed="true" style="position: relative;" color="#7d33ff" text-white square center-collapsed v-model="active">
       <template #left>
         <img src="/logos/logo-vuesax-logotipo-vuesax-png-4.png" alt="">
       </template>
@@ -25,7 +25,7 @@
         <vs-button color="#fff" flat >Login</vs-button>
         <vs-button color="#fff" border >Get Started</vs-button>
       </template>
-    </vs-navbar>
+    </vs-navbar> -->
     <router-view style="padding-top: 44px"/>
   </div>
 </template>
