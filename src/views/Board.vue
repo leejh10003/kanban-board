@@ -42,6 +42,7 @@
                 transparent
                 style="margin-left: auto"
                 v-if="list.adding === false && list.fixingTitle === false"
+                :disabled="!isAdmin && !isParticipant"
                 @click="list.adding = true"
               >
                 <i class="bx bx-plus" />
@@ -122,6 +123,7 @@
           type="filled"
           color="dark"
           v-if="addingColumn === false"
+          :disabled="!isAdmin && !isParticipant"
           @click="addingColumn = true"
           ><i class="bx bx-plus"></i
         ></vs-button>
