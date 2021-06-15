@@ -12,6 +12,10 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import locale from 'element-ui/lib/locale/lang/ko'
 import 'boxicons/css/boxicons.min.css'
+import VueApexCharts from 'vue-apexcharts'
+Vue.use(VueApexCharts)
+
+Vue.component('apexchart', VueApexCharts)
 
 Vue.use(ElementUI, {locale});
 
