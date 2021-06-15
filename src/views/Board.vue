@@ -8,6 +8,8 @@
             <div style="display: flex; align-items: baseline">
               <h4 @click="list.fixingTitle = true" class="column-name" v-if="list.fixingTitle === false">{{ list.name }}</h4>
               <input @keydown.enter="fixListTitle(list)" v-else v-model="list.name" class="column-name" placeholder="제목"/>
+              <span @click="list.fixingPercentage = true" style="color: #7f7f7f" class="progress" v-if="list.fixingPercentage === false">진척도 {{ list.percentage_progress }}</span>
+              <input type="number" @keydown.enter="fixPercentage(list)" class="progress" v-else v-model="list.percentage_progress" placeholder="진척도"/>
               <vs-button
                 circle
                 icon
@@ -119,6 +121,14 @@
 </template>
 
 <style lang="scss" scoped>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
 .column-name {
   text-align: left;
   padding-left: 10px;
@@ -129,7 +139,7 @@
   font-family: Noto Sans KR, Helvetica;
   background-color:transparent;
   border: 0px;
-  width: calc(100% - 70px);
+  width: calc(100% - 140px);
   font-weight: bold;
   border: 1px solid transparent;
 }
@@ -180,6 +190,18 @@
   box-shadow: 0 0.1875rem 1.5rem rgba(0, 0, 0, 0.2);
   border-radius: 0.375rem;
   min-height: 50px;
+}
+.progress{
+  font-size: 12px;
+  width: 100px;
+  text-align: left;
+  padding-left: 10px;
+  border: 1px solid transparent;
+  background-color: transparent;
+}
+.progress:hover{
+  border: 1px solid #dddddd;
+  border-radius: 6px;
 }
 .column-adder{
   min-width: 110px;
@@ -238,6 +260,8 @@ export default {
             id
             name
             cards {
+            percentage_progress
+            cards(order_by: { index: asc }) {
               card_descriptions {
                 card_id
                 content
@@ -269,6 +293,7 @@ export default {
           adding: false,
           addContent: "",
           fixingTitle: false,
+          fixingPercentage: false,
           ...e,
         }));
       },
@@ -293,6 +318,27 @@ export default {
     },
   },
   methods: {
+    async fixPercentage(list){
+      if (!list.percentage_progress){
+        return
+      } else if (parseInt(list.percentage_progress) < 0){
+        list.percentage_progress = 0
+      } else if (parseInt(list.percentage_progress) > 100){
+        list.percentage_progress = 100
+      }
+      await this.$apollo.mutate({
+        variables: {
+          percenage: parseInt(list.percentage_progress),
+          id: list.id
+        },
+        mutation: gql`mutation($percenage: Int, $id: Int!){
+          update_columns_by_pk(pk_columns: {id: $id}, _set: {percentage_progress: $percenage}){
+            id
+          }
+        }`
+      })
+      list.fixingPercentage = false
+    },
     async fixListTitle(list){
       await this.$apollo.mutate({
         variables: {
