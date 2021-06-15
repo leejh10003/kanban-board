@@ -63,9 +63,22 @@
                   </div>
                 </template>
               </card>
-              <draggable class="list-group " :list="list.cards" group="card">
+              <draggable
+                class="list-group"
+                :list="list.cards"
+                group="card"
+                @end="updateCardsIndex(list)"
+                @add="updateCardsIndex(list)"
+                @remove="updateCardsIndex(list)"
+              >
                 <div v-for="element in list.cards" :key="element.id">
-                  <Task style="max-width: 300px" v-bind:element="{ ...element }" v-bind:refetch="refetch" v-bind:tagList="tags"/>
+                  <Task
+                    style="max-width: 300px"
+                    v-bind:element="{ ...element }"
+                    v-bind:refetch="refetch"
+                    v-bind:tagList="tags"
+                    v-bind:users="users"
+                  />
                 </div>
               </draggable>
             </div>
@@ -237,7 +250,12 @@ export default {
       loading: null,
       addingColumn: false,
       addColumnTitle: "",
+      tags: [],
+      users: [],
     };
+  },
+  beforeDestroy: function(){
+    this.loading.close();
   },
   created() {
     this.loading = this.$vs.loading({
@@ -259,7 +277,6 @@ export default {
           columns(where: { board_id: { _eq: $id } }) {
             id
             name
-            cards {
             percentage_progress
             cards(order_by: { index: asc }) {
               card_descriptions {
@@ -278,6 +295,14 @@ export default {
                   tag
                 }
               }
+              user_card_taggings {
+                user {
+                    id
+                    name
+                    thumbnail
+                }
+              }
+              index
             }
           }
 
@@ -285,10 +310,19 @@ export default {
             id
             tag
           }
+
+          boards_user(where: { board_id: { _eq: $id } }) {
+            id
+            thumbnail
+            email
+            name
+          }
         }
       `,
       update(data) {
         this.loading.close();
+        this.$data.tags = data.tag;
+        this.$data.users = data.boards_user;
         return data.columns.map((e) => ({
           adding: false,
           addContent: "",
@@ -296,24 +330,6 @@ export default {
           fixingPercentage: false,
           ...e,
         }));
-      },
-    },
-    tags: {
-      variables() {
-        return {
-          id: this.$route.params.id,
-        };
-      },
-      query: gql`
-        query ($id: Int!) {
-          tag(where: { board_id: { _eq: $id } }) {
-            id
-            tag
-          }
-        }
-      `,
-      update(data) {
-        return data.tag;
       },
     },
   },
@@ -388,6 +404,32 @@ export default {
       });
       this.$apollo.queries.lists.refetch();
     },
+    updateCardIndex: async function (cardId, index, columnId) {
+      //TODO : modify user id
+      await this.$apollo.mutate({
+        mutation: gql`
+          mutation updateCardIndex(
+            $card_id: Int!
+            $index: Int!
+            $column_id: Int!
+          ) {
+            update_card(
+              where: { id: { _eq: $card_id } }
+              _set: { index: $index, column_id: $column_id }
+            ) {
+              returning {
+                id
+              }
+            }
+          }
+        `,
+        variables: {
+          card_id: cardId,
+          index,
+          column_id: columnId,
+        },
+      });
+    },
     addColumnClear: function(){
       this.addingColumn = false
       this.addColumnTitle = ""
@@ -418,6 +460,16 @@ export default {
         },
       });
       this.$data.addingColumn = false;
+    },
+    updateCardsIndex: async function (list) {
+      console.log(list);
+      console.log(list.cards);
+      const updatePromises = list.cards.map((e, index) => {
+        console.log(e.id, index, list.id);
+        return this.updateCardIndex(e.id, index, list.id);
+      });
+
+      await Promise.all(updatePromises);
     },
     refetch: function () {
       this.$apollo.queries.lists.refetch();
