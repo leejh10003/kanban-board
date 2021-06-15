@@ -19,7 +19,7 @@
                 v-if="list.adding === false && list.fixingTitle === false"
                 @click="list.adding = true"
               >
-                <i class ="bx bx-plus"/>
+                <i class="bx bx-plus" />
               </vs-button>
               <vs-button
                 circle
@@ -29,7 +29,7 @@
                 @click="list.fixingTitle = false"
                 v-if="list.adding === false && list.fixingTitle === true"
               >
-                <i class ="bx bx-check"/>
+                <i class="bx bx-check" />
               </vs-button>
             </div>
             <div class="list-card">
@@ -45,7 +45,7 @@
                   />
                 </template>
                 <template #tailing>
-                  <div style="display: flex; justify-content: flex-end;">
+                  <div style="display: flex; justify-content: flex-end">
                     <vs-button
                       type="filled"
                       color="primary"
@@ -63,9 +63,22 @@
                   </div>
                 </template>
               </card>
-              <draggable class="list-group " :list="list.cards" group="card">
+              <draggable
+                class="list-group"
+                :list="list.cards"
+                group="card"
+                @end="updateCardsIndex(list)"
+                @add="updateCardsIndex(list)"
+                @remove="updateCardsIndex(list)"
+              >
                 <div v-for="element in list.cards" :key="element.id">
-                  <Task style="max-width: 300px" v-bind:element="{ ...element }" v-bind:refetch="refetch" v-bind:tagList="tags"/>
+                  <Task
+                    style="max-width: 300px"
+                    v-bind:element="{ ...element }"
+                    v-bind:refetch="refetch"
+                    v-bind:tagList="tags"
+                    v-bind:users="users"
+                  />
                 </div>
               </draggable>
             </div>
@@ -90,14 +103,18 @@
           <div class="list-container">
             <div class="col-3">
               <div style="display: flex; align-items: baseline">
-                <input v-model="addColumnTitle" class="column-name" placeholder="제목"/>
+                <input
+                  v-model="addColumnTitle"
+                  class="column-name"
+                  placeholder="제목"
+                />
                 <vs-button
                   circle
                   icon
                   transparent
                   @click="addColumn(addColumnTitle)"
                 >
-                  <i class ="bx bx-check"/>
+                  <i class="bx bx-check" />
                 </vs-button>
                 <vs-button
                   circle
@@ -107,10 +124,10 @@
                   v-model="addColumnTitle"
                   @click="addColumnClear"
                 >
-                  <i class ="bx bx-x"/>
+                  <i class="bx bx-x" />
                 </vs-button>
               </div>
-              <div class="list-card"/>
+              <div class="list-card" />
             </div>
           </div>
         </div>
@@ -136,23 +153,21 @@ input[type=number] {
   height: 20px;
   padding: 0px 0px 0px 10px;
   font-family: Noto Sans KR, Helvetica;
-  background-color:transparent;
+  background-color: transparent;
   border: 0px;
   width: calc(100% - 140px);
   font-weight: bold;
   border: 1px solid transparent;
 }
-.column-name:hover{
+.column-name:hover {
   border: 1px solid #dddddd;
   border-radius: 8px;
 }
-.col-3{
-  width: 300px
+.col-3 {
+  width: 300px;
 }
-.list-for{
-  width: 340px
-}
-.add-button {
+.list-for {
+  width: 340px;
 }
 
 .divider {
@@ -204,7 +219,7 @@ input[type=number] {
 import draggable from "vuedraggable";
 import gql from "graphql-tag";
 import Task from "../components/Task";
-import card from '../components/Card.vue'
+import card from "../components/Card.vue";
 
 export default {
   name: "two-lists",
@@ -220,7 +235,8 @@ export default {
       loading: null,
       addingColumn: false,
       addColumnTitle: "",
-      tags: []
+      tags: [],
+      users: [],
     };
   },
   beforeDestroy: function(){
@@ -247,7 +263,7 @@ export default {
             id
             name
             percentage_progress
-            cards {
+            cards(order_by: { index: asc }) {
               card_descriptions {
                 card_id
                 content
@@ -264,6 +280,14 @@ export default {
                   tag
                 }
               }
+              user_card_taggings {
+                user {
+                  id
+                  name
+                  thumbnail
+                }
+              }
+              index
             }
           }
 
@@ -271,11 +295,19 @@ export default {
             id
             tag
           }
+
+          boards_user(where: { board_id: { _eq: $id } }) {
+            id
+            thumbnail
+            email
+            name
+          }
         }
       `,
       update(data) {
         this.loading.close();
         this.$data.tags = data.tag;
+        this.$data.users = data.boards_user;
         return data.columns.map((e) => ({
           adding: false,
           addContent: "",
@@ -312,15 +344,20 @@ export default {
       await this.$apollo.mutate({
         variables: {
           name: list.name,
-          id: list.id
+          id: list.id,
         },
-        mutation: gql`mutation($name: String!, $id: Int!){
-          update_columns_by_pk(pk_columns: {id: $id}, _set: {name: $name}){
-            id
+        mutation: gql`
+          mutation ($name: String!, $id: Int!) {
+            update_columns_by_pk(
+              pk_columns: { id: $id }
+              _set: { name: $name }
+            ) {
+              id
+            }
           }
-        }`
-      })
-      list.fixingTitle = false
+        `,
+      });
+      list.fixingTitle = false;
     },
     replace: function () {
       this.list = [{ name: "Edgard" }];
@@ -357,9 +394,35 @@ export default {
       });
       this.$apollo.queries.lists.refetch();
     },
-    addColumnClear: function(){
-      this.addingColumn = false
-      this.addColumnTitle = ""
+    updateCardIndex: async function (cardId, index, columnId) {
+      //TODO : modify user id
+      await this.$apollo.mutate({
+        mutation: gql`
+          mutation updateCardIndex(
+            $card_id: Int!
+            $index: Int!
+            $column_id: Int!
+          ) {
+            update_card(
+              where: { id: { _eq: $card_id } }
+              _set: { index: $index, column_id: $column_id }
+            ) {
+              returning {
+                id
+              }
+            }
+          }
+        `,
+        variables: {
+          card_id: cardId,
+          index,
+          column_id: columnId,
+        },
+      });
+    },
+    addColumnClear: function () {
+      this.addingColumn = false;
+      this.addColumnTitle = "";
     },
     addColumn: async function (boardName) {
       const boardId = this.$route.params.id;
@@ -367,14 +430,7 @@ export default {
       await this.$apollo.mutate({
         mutation: gql`
           mutation addColumn($board_id: Int!, $name: String!) {
-            insert_columns(
-              objects: [
-                {
-                  board_id: $board_id,
-                  name: $name
-                }
-              ]
-            ) {
+            insert_columns(objects: [{ board_id: $board_id, name: $name }]) {
               returning {
                 id
               }
@@ -388,10 +444,20 @@ export default {
       });
       this.$data.addingColumn = false;
     },
+    updateCardsIndex: async function (list) {
+      console.log(list);
+      console.log(list.cards);
+      const updatePromises = list.cards.map((e, index) => {
+        console.log(e.id, index, list.id);
+        return this.updateCardIndex(e.id, index, list.id);
+      });
+
+      await Promise.all(updatePromises);
+    },
     refetch: function () {
       this.$apollo.queries.lists.refetch();
       this.$apollo.queries.tags.refetch();
-    }
+    },
   },
 };
 </script>
