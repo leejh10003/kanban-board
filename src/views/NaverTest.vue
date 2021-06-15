@@ -1,14 +1,11 @@
 <template>
   <div id="screen">
-    
-    <div class = "wrap1">
-      
-      <div id="logo-part">
-        <img src="../assets/kanban2.png" id="logo-photo"/>
-        <p>간반보드</p>
-      </div>
+    <div class="login-form-wrapper">
       <div id="login-card">
-        <!-- <h1 id="login-title">Sign in</h1> -->
+        <div id="logo-part">
+          <img src="../assets/kanban2.png" id="logo-photo"/>
+          <p>간반보드</p>
+        </div>
         <img src="../assets/loginbutton.png" id="login-button" v-on:click="naverlogin()"/>
       </div>
     </div>
@@ -41,17 +38,19 @@ export default {
   
 }
 #login-card{
-    /* box-shadow: 0px 5px 20px 0px rgb(0 0 0 / 5%); */
-    /* border-radius: 20px; */
-    width: 300px;
+    box-shadow: 0px 5px 20px 0px rgb(0 0 0 / 5%);
+    border-radius: 20px;
+    width: 440px;
     position: absolute;
-    height: 200px;
-    margin-left: calc(50vw - 150px);
-    margin-top: calc(50vh - 230px);
-    /* background-color: white; */
+    display: flex;
+    flex-direction: column;
+    height: 370px;
+    padding: 20px;
+    margin-left: calc(50vw - 200px);
+    margin-top: calc(50vh - 207px);
+    background-color: rgba(255, 255, 255, 0.8);
 }
 #login-button{
-  height: 48px;
   cursor: pointer;
 }
 #login-title{
@@ -59,9 +58,6 @@ export default {
 }
 
 #logo-part{
-  margin : auto 0px;
-  margin-top: calc(50vh - 280px);
-  height: 0px;
   /* margin-top: calc(50vh - 380px); */
 }
 
@@ -77,7 +73,7 @@ export default {
   height: 180px;
 }
 
-.wrap1{
+#login-form-wrapper{
   
 }
 
