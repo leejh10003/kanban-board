@@ -257,28 +257,28 @@
               <vs-avatar style="position: absolute" v-else>
                 <img :src="user.thumbnail" alt="" />
               </vs-avatar>
-              <vs-button
-                @click.stop="deleteUser('participants', index)"
-                @mouseenter.stop
-                size="mini"
-                style="
-                  position: absolute;
-                  top: -8px;
-                  right: -10px;
-                  height: 16px;
-                  width: 16px;
-                "
-                circle
-                icon
-                danger
-                floating
-              >
-                <i class="bx bx-x"></i>
-              </vs-button>
               <template #tooltip>
                 {{ user.name }}
               </template>
             </vs-tooltip>
+            <vs-button
+              @click.stop="deleteUser('participants', index)"
+              @mouseenter.stop
+              size="mini"
+              style="
+                position: absolute;
+                top: -8px;
+                right: -10px;
+                height: 16px;
+                width: 16px;
+              "
+              circle
+              icon
+              danger
+              floating
+            >
+              <i class="bx bx-x"></i>
+            </vs-button>
           </div>
         </div>
         <el-autocomplete
@@ -745,10 +745,10 @@ export default {
         index
       ].deleted = true;
       (kind === "admin" ? this.admins : this.participants).splice(index, 1);
-      const Stickedtooltips = document.querySelectorAll(".vs-tooltip");
-      for (const tooltip of Stickedtooltips) {
-        tooltip.remove();
-      }
+      // const Stickedtooltips = document.querySelectorAll(".vs-tooltip");
+      // for (const tooltip of Stickedtooltips) {
+      //   tooltip.remove();
+      // }
     },
     async querySearch(queryString, callback) {
       const {
