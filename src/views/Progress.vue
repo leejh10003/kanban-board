@@ -102,6 +102,11 @@ export default {
           categories: [],
         },
         yaxis: {
+          labels: {
+            formatter: function(val) {
+              return val.toFixed(0);
+            }
+          },
           title: {
             text: '완료한 카드의 갯수'
           }
@@ -146,6 +151,11 @@ export default {
         yaxis: {
           title: {
             text: '보드별 진척도'
+          },
+          labels: {
+            formatter: function(val) {
+              return val.toFixed(0);
+            }
           }
         },
         fill: {
@@ -163,6 +173,13 @@ export default {
         data: [0],
         labels: ['보드 평균 진척'],
         colors: ['red'],
+        yaxis: {
+          labels: {
+            formatter: function(val) {
+              return val.toFixed(0);
+            }
+          }
+        },
         plotOptions: {
           radialBar: {
             hollow: {
@@ -189,6 +206,13 @@ export default {
         data: [0],
         labels: ['전체 진척'],
         colors: ['red'],
+        yaxis: {
+          labels: {
+            formatter: function(val) {
+              return val.toFixed(0);
+            }
+          }
+        },
         plotOptions: {
           radialBar: {
             hollow: {
@@ -235,15 +259,15 @@ export default {
         const wholeCardNumber = data.boards_progress.map(({card_num}) => card_num).reduce((former, latter) => former + latter, 0)
         const wholePercentageMean = data.boards_progress.map(({progress}) => progress).reduce((former, latter) => former + latter, 0)
         const wholeWeightedMean = data.boards_progress.map(({progress, card_num}) => progress * card_num / wholeCardNumber).reduce((former, latter) => former + latter, 0)
-        this.wholePercentageMean.data = [wholePercentageMean]
-        this.wholePercentageMean.colors = [wholePercentageMean < 30 ? '#e91e63' : (wholePercentageMean < 60 ? '#ffc107' : '#29b6f6')]
-        this.wholeWeightedMean.data = [wholeWeightedMean]
-        this.wholeWeightedMean.colors = [wholeWeightedMean < 30 ? '#e91e63' : (wholeWeightedMean < 60 ? '#ffc107' : '#29b6f6')]
+        this.wholePercentageMean.data = [Math.floor(wholePercentageMean * 100)]
+        this.wholePercentageMean.colors = [wholePercentageMean * 100 < 30 ? '#e91e63' : (wholePercentageMean * 100 < 60 ? '#ffc107' : '#29b6f6')]
+        this.wholeWeightedMean.data = [Math.floor(wholeWeightedMean * 100)]
+        this.wholeWeightedMean.colors = [wholeWeightedMean * 100 < 30 ? '#e91e63' : (wholeWeightedMean * 100 < 60 ? '#ffc107' : '#29b6f6')]
         const finished = data.boards_progress.map(({finished_num, board: {name}}) => ({finished_num, name})).sort((former, latter) => latter.finished_num - former.finished_num).slice(0, 6)
-        this.finishedCards.series[0].data = finished.map(({finished_num}) => finished_num)
+        this.finishedCards.series[0].data = finished.map(({finished_num}) => Math.floor(finished_num))
         this.finishedCards.xaxis.categories = finished.map(({name}) => name)
         const progression = data.boards_progress.map(({progress, board: {name}}) => ({progress, name})).sort((former, latter) => latter.progress - former.progress).slice(0, 6)
-        this.progression.series[0].data = progression.map(({progress}) => progress)
+        this.progression.series[0].data = progression.map(({progress}) => Math.floor(progress * 100))
         this.progression.xaxis.categories = progression.map(({name}) => name)
         this.boardNumber = data.boards_progress.length
         this.finished = data.boards_progress.filter((board) => board.progress === 100).length
