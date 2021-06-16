@@ -11,7 +11,7 @@
         진척도
       </vs-navbar-item>
       <template #right>
-        <vs-button v-if="selected === '/board'" color="#fff" flat >보드들</vs-button>
+        <vs-button @click="toBoards" v-if="selected === '/board'" color="#fff" flat >보드들</vs-button>
         <vs-button @click="logout" color="#fff" border >로그아웃</vs-button>
       </template>
     </vs-navbar>
@@ -54,7 +54,10 @@ export default {
       return this.$route
   },
   methods: {
-    logout
+    logout,
+    toBoards(){
+      this.$router.push('/boards')
+    }
   },
   data(){
     return {
