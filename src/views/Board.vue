@@ -66,11 +66,37 @@
               </vs-button>
             </div>
             <div class="list-card">
-              <card v-if="list.adding === true">
+              <card
+              @drop="dropFile(list, $event)"
+              v-if="list.adding === true">
                 <template #hero>
-                  <img :src="''" alt="" />
+                  {{list.fileName}}
+                  <div class="file-upload">
+                    <input
+                      :id="'fileUpload' + list.id"
+                      type="file"
+                      @change="handleFileChange(list, $event)"
+                      hidden
+                    />
+                    <br/>
+                    <div
+                      class="file-upload-drop-area"
+                      @click="chooseFiles(list.id)"
+                      @dragover.prevent
+                      @dragleave.prevent
+                      @drop.prevent="dropFile(list, $event)" >
+                      여기를 클릭하거나 드래그해 이미지 업로드...
+                    </div>
+                  </div>
                 </template>
                 <template #body>
+                  <img v-if="list.uploadingFileUrl" :src="list.uploadingFileUrl" />
+                  <vs-input
+                    type="text"
+                    v-model="list.addTitle"
+                    class="add-card-body"
+                    placeholder="제목"
+                  />
                   <vs-input
                     type="text"
                     v-model="list.addContent"
@@ -82,7 +108,7 @@
                     <vs-button
                       type="filled"
                       color="primary"
-                      v-on:click="addCard(list.id, list.addContent)"
+                      v-on:click="addCard(list)"
                     >
                       추가
                     </vs-button>
@@ -318,6 +344,27 @@
 </template>
 
 <style lang="scss" scoped>
+
+.file-upload-drop-area{
+  border: dashed 1px grey;
+  border-radius: 8px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: grey;
+  padding: 30px
+}
+.file-upload-button {
+  width: 80%;
+  text-align: center;
+}
+
+.add-card-body {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 .set-permission {
   position: fixed;
   bottom: 30px;
@@ -443,6 +490,9 @@ import draggable from "vuedraggable";
 import gql from "graphql-tag";
 import Task from "../components/Task";
 import card from "../components/Card.vue";
+import S3 from "../s3";
+
+const s3 = new S3();
 
 export default {
   name: "two-lists",
@@ -472,6 +522,9 @@ export default {
       newAdminQuery: "",
       newParticipantsQuery: "",
       setPermission: false,
+      fileName: "",
+      uploadingFile: null, 
+      uploadingFileUrl: "", 
     };
   },
   beforeDestroy: function () {
@@ -499,10 +552,12 @@ export default {
             name
             percentage_progress
             cards(order_by: { index: asc }) {
-              card_descriptions {
+              card_description {
                 card_id
+                title
                 content
                 hyperlink
+                image
               }
               created_by {
                 name
@@ -559,8 +614,9 @@ export default {
         }
       `,
       update(data) {
-        this.loading.close();
-        console.log("updated");
+        if (this.loading){
+          this.loading.close();
+        }
         this.$data.tags = data.tag;
         this.$data.users = data.boards_user;
         this.$data.totalUsers = data.user;
@@ -573,15 +629,25 @@ export default {
         this.initPermissions(this.$data.admins, this.$data.participants);
         return data.columns.map((e) => ({
           adding: false,
+          addTitle: "",
           addContent: "",
           fixingTitle: false,
           fixingPercentage: false,
+          fileName: "",
+          uploadingFile: null,
+          uploadingFileUrl: "",
           ...e,
         }));
       },
     },
   },
   methods: {
+    async dropFile(list, event){
+      const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image'))
+      list.fileName = files[0].name;
+      list.uploadingFile = files[0];
+      list.uploadingFileUrl = URL.createObjectURL(files[0]);
+    },
     async fixPercentage(list) {
       if (!list.percentage_progress) {
         return;
@@ -635,32 +701,74 @@ export default {
         name: el.name + " cloned",
       };
     },
-    addCard: async function (list_id, content) {
-      //TODO : modify user id
-      await this.$apollo.mutate({
+    addCard: async function (list) {
+      const userId = this.currentUser.id;
+      const listId = list.id;
+      const title = list.addTitle;
+      const content = list.addContent;
+      const index = list.cards.length;
+      const imageUrl = await s3.upload(list.uploadingFile);
+
+      const { data: {insert_card_description_one: {card}}  } = await this.$apollo.mutate({
         mutation: gql`
-          mutation addCard($list_id: Int!, $content: String!) {
-            insert_card_description(
-              objects: [
+          mutation addCard($list_id: Int!, $title: String!, $content: String!, $user_id: Int!, $index: Int!, $image: String!) {
+            insert_card_description_one(
+              object: 
                 {
-                  card: { data: { created_by_user_id: 1, column_id: $list_id } }
+                  card: { data: { created_by_user_id: $user_id, column_id: $list_id, index: $index } }
+                  title: $title
                   content: $content
-                  user_id: 1
+                  user_id: $user_id
+                  image: $image
                 }
-              ]
             ) {
-              returning {
-                id
+              card {
+              card_description {
+                card_id
+                title
+                content
+                hyperlink
+                image
               }
+              created_by {
+                name
+                thumbnail
+              }
+              id
+              card_taggings {
+                tag {
+                  id
+                  tag
+                }
+              }
+              user_card_taggings {
+                user {
+                  id
+                  name
+                  thumbnail
+                }
+              }
+              index
+            }
             }
           }
         `,
         variables: {
-          list_id,
+          list_id: listId,
+          title,
           content,
+          user_id: userId,
+          index,
+          image: imageUrl,
         },
       });
-      this.$apollo.queries.lists.refetch();
+      list.cards.push(card);
+      list.adding = false;
+      list.addTitle = "";
+      list.addContent = "";
+      list.fileName = "";
+      list.uploadingFile = null;
+      list.uploadingFileUrl = "";
     },
     updateCardIndex: async function (cardId, index, columnId) {
       await this.$apollo.mutate({
@@ -694,7 +802,6 @@ export default {
     addColumn: async function (boardName) {
       const boardId = this.$route.params.id;
       const columnLength = this.lists.length + 1;
-      //TODO : modify user id
       const { data } = await this.$apollo.mutate({
         mutation: gql`
           mutation addColumn($board_id: Int!, $name: String!, $index: Int!) {
@@ -705,9 +812,11 @@ export default {
               name
               percentage_progress
               cards(order_by: { index: asc }) {
-                card_descriptions {
+                card_description {
                   card_id
+                  title
                   content
+                  image
                   hyperlink
                 }
                 created_by {
@@ -739,7 +848,6 @@ export default {
           index: columnLength,
         },
       });
-      console.log(data);
       this.$data.addingColumn = false;
       this.lists.push(data.insert_columns_one);
     },
@@ -764,7 +872,6 @@ export default {
       });
     },
     updateColumnsIndex: async function (lists) {
-      console.log(lists);
       const updatePromises = lists.map((e, index) => {
         return this.updateColumnIndex(e.id, index);
       });
@@ -773,7 +880,6 @@ export default {
     },
     updateCardsIndex: async function (list) {
       const updatePromises = list.cards.map((e, index) => {
-        console.log(e.id, index, list.id);
         return this.updateCardIndex(e.id, index, list.id);
       });
 
@@ -809,10 +915,6 @@ export default {
         index
       ].deleted = true;
       (kind === "admin" ? this.admins : this.participants).splice(index, 1);
-      // const Stickedtooltips = document.querySelectorAll(".vs-tooltip");
-      // for (const tooltip of Stickedtooltips) {
-      //   tooltip.remove();
-      // }
     },
     async querySearch(queryString, callback) {
       const {
@@ -886,6 +988,14 @@ export default {
         },
       });
       this.setPermission = false;
+    },
+    handleFileChange(list, e) {
+      list.fileName = e.target.files[0].name;
+      list.uploadingFile = e.target.files[0];
+      list.uploadingFileUrl = URL.createObjectURL(e.target.files[0]);
+    },
+    chooseFiles(id) {
+      document.getElementById("fileUpload" + id).click();
     },
   },
 };

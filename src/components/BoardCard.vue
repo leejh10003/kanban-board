@@ -8,14 +8,17 @@
       </template>
       <template #tailing>
         <div class="tailing-users">
-          <div
-            class="user-entities"
-            v-for="(entity, index) in mapUsers(board.boards_users, board.boards_users_aggregate.aggregate.count)"
-            :key="`${board.id}-${entity.id}`">
-              <div class="user-entity" v-if="entity.type === 'thumbnail'" :src="entity.value" :style="{zIndex: index, backgroundImage: `url(${entity.value})`, backgroundSize: 'cover'}"/>
-              <div class="user-entity user-text" v-else-if="entity.type === 'name'" >{{entity.id}}</div>
-              <div class="user-entity user-left" v-else>{{entity.value}}</div>
-          </div>
+          <vs-avatar-group max="7">
+            <vs-avatar
+              v-for="(entity) in mapUsers(board.boards_users, board.boards_users_aggregate.aggregate.count)"
+              :key="`${board.id}-${entity.id}`"
+            >
+              <img v-if="entity.type === 'thumbnail'" :src="entity.value" />
+              <template #text>
+                <div style="color: green" v-if="entity.type === 'name'">{{entity.name || entity.id}}</div>
+              </template>
+            </vs-avatar>
+          </vs-avatar-group>
         </div>
       </template>
     </card>
@@ -116,8 +119,9 @@ export default {
   text-align: center;
   vertical-align: middle;
   line-height: 30px;
-  background-color: #2DB400;
-  color: white;
+  width: 100%;
+  height: 100%;
+  color: #2DB400;
   font-weight: 800;
   border: solid;
 }
@@ -129,12 +133,6 @@ export default {
   color: black;
   font-weight: 800;
   border: solid;
-}
-.user-entity{
-  height: 30px;
-  width: 30px;
-  border-radius: 15px;
-  border: solid #e7e7e7 1px;
 }
 .tailing-users{
   display: flex;

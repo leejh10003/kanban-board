@@ -3,21 +3,37 @@
     <template #hero>
       <img
         class="hero"
-        v-if="!!element.created_by && !!element.created_by.thumbnail"
+        v-if="!!element.card_description && !!element.card_description.image"
+        :src="element.card_description.image"
+      />
+      <img
+        class="hero"
+        v-else-if="!!element.created_by && !!element.created_by.thumbnail"
         :src="element.created_by.thumbnail"
       />
     </template>
     <template #title>
-      <h3 style="margin: 0px">{{ getTitle(element) }}</h3>
+      <h3 style="margin: 0px">
+        {{
+          element.card_description != null ? element.card_description.title : ""
+        }}
+      </h3>
     </template>
     <template #body>
-      <div v-for="(paragraph, index) in element.card_descriptions" :key="index">
-        <p class="post-description">{{ paragraph.content }}</p>
-      </div>
+      <p class="post-description">
+        {{
+          element.card_description != null
+            ? element.card_description.content
+            : ""
+        }}
+      </p>
       <div class="div-assign">
         <md-menu md-direction="bottom-end" mdCloseOnClick>
           <vs-avatar md-menu-trigger size="40">
-            <img v-if="taggedUser != null && taggedUser.thumbnail != null" :src="taggedUser.thumbnail" />
+            <img
+              v-if="taggedUser != null && taggedUser.thumbnail != null"
+              :src="taggedUser.thumbnail"
+            />
             <i v-else class="bx bx-user"></i>
           </vs-avatar>
           <!-- <md-button md-menu-trigger class="md-icon-button md-dense">
@@ -157,8 +173,8 @@ export default {
   },
   methods: {
     getTitle: (element) =>
-      (element?.card_descriptions?.[0]?.content ||
-        element?.card_descriptions?.[0]?.hyperlink) ??
+      (element?.card_description?.content ||
+        element?.card_description?.hyperlink) ??
       "",
     getTagIds() {
       return this.$props.element.card_taggings.map((e) => {
@@ -223,10 +239,8 @@ export default {
       });
     },
     insertTagHandler: async function (newTag) {
-      // const equalTag = this.$props.tagList.find(e => e.tag === newTag);
       let newTagId;
       let newTagName;
-      // console.log(equalTag);
       if (newTag.id != null) {
         newTagId = newTag.id;
         newTagName = newTag.tag;
