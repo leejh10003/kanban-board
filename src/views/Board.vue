@@ -66,23 +66,27 @@
               </vs-button>
             </div>
             <div class="list-card">
-              <card v-if="list.adding === true">
+              <card
+              @drop="dropFile"
+              v-if="list.adding === true">
                 <template #hero>
                   {{fileName}}
                   <div class="file-upload">
-                  <input
-                    id="fileUpload"
-                    type="file"
-                    @change="handleFileChange"
-                    hidden
-                  />
-                  <br/>
-                  <vs-button
-                    class="file-upload-button"
-                    @click="chooseFiles"
-                  >
-                  Image File upload
-                  </vs-button>
+                    <input
+                      id="fileUpload"
+                      type="file"
+                      @change="handleFileChange"
+                      hidden
+                    />
+                    <br/>
+                    <div
+                      class="file-upload-drop-area"
+                      @click="chooseFiles"
+                      @dragover.prevent
+                      @dragleave.prevent
+                      @drop.prevent="dropFile" >
+                      여기를 클릭하거나 드래그해 이미지 업로드...
+                    </div>
                   </div>
                 </template>
                 <template #body>
@@ -341,12 +345,16 @@
 
 <style lang="scss" scoped>
 
-.file-upload {
-  align-content: center;
+.file-upload-drop-area{
+  border: dashed 1px grey;
+  border-radius: 8px;
+  height: 60px;
   display: flex;
+  align-items: center;
   justify-content: center;
+  color: grey;
+  padding: 30px
 }
-
 .file-upload-button {
   width: 80%;
   text-align: center;
@@ -601,8 +609,9 @@ export default {
         }
       `,
       update(data) {
-        this.loading.close();
-        console.log("updated");
+        if (this.loading){
+          this.loading.close();
+        }
         this.$data.tags = data.tag;
         this.$data.users = data.boards_user;
         this.$data.totalUsers = data.user;
@@ -625,6 +634,10 @@ export default {
     },
   },
   methods: {
+    async dropFile(event){
+      const file = Array.from(event.dataTransfer.files)
+      console.log(file)
+    },
     async fixPercentage(list) {
       if (!list.percentage_progress) {
         return;
