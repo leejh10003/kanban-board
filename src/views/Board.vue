@@ -109,14 +109,14 @@
                 <template #tailing>
                   <div style="display: flex; justify-content: flex-end">
                     <vs-button
-                      type="filled"
+                      transparent
                       color="primary"
                       v-on:click="addCard(list)"
                     >
                       추가
                     </vs-button>
                     <vs-button
-                      type="filled"
+                      transparent
                       color="danger"
                       v-on:click="list.adding = false"
                     >
@@ -647,11 +647,17 @@ export default {
   },
   methods: {
     async dropCardCreate(list, event) {
-      const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image'))
-      list.adding = true
-      list.fileName = files[0].name;
-      list.uploadingFile = files[0];
-      list.uploadingFileUrl = URL.createObjectURL(files[0]);
+      const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image') || file.type.startsWith('text'))
+      if (files.length > 0){
+        list.adding = true
+        if (files[0].type.startsWith('image')){
+          list.fileName = files[0].name;
+          list.uploadingFile = files[0];
+          list.uploadingFileUrl = URL.createObjectURL(files[0]);
+        } else {
+          list.addContent = await files[0].text()
+        }
+      }
     },
     async dropFile(list, event){
       const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image'))
