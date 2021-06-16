@@ -104,7 +104,7 @@
                     <vs-button
                       type="filled"
                       color="primary"
-                      v-on:click="addCard(list.id, list.addContent)"
+                      v-on:click="addCard(list.id, list.addTitle, list.addContent, list.cards.length)"
                     >
                       추가
                     </vs-button>
@@ -678,17 +678,20 @@ export default {
         name: el.name + " cloned",
       };
     },
-    addCard: async function (list_id, content) {
-      //TODO : modify user id
+    addCard: async function (list_id, title, content, index) {
+      const userId = this.currentUser.id;
+      console.log(index);
+
       await this.$apollo.mutate({
         mutation: gql`
-          mutation addCard($list_id: Int!, $content: String!) {
+          mutation addCard($list_id: Int!, $title: String!, $content: String!, $user_id: Int!, $index: Int!) {
             insert_card_description(
               objects: [
                 {
-                  card: { data: { created_by_user_id: 1, column_id: $list_id } }
+                  card: { data: { created_by_user_id: $user_id, column_id: $list_id, index: $index } }
+                  title: $title
                   content: $content
-                  user_id: 1
+                  user_id: $user_id
                 }
               ]
             ) {
@@ -700,7 +703,10 @@ export default {
         `,
         variables: {
           list_id,
+          title,
           content,
+          user_id: userId,
+          index,
         },
       });
       this.$apollo.queries.lists.refetch();
