@@ -28,11 +28,16 @@ export const getToken = async function(){
     }
     return applyToken
   } catch(e) {
-    localStorage.removeItem('token')
-    store.commit('logout')
-    router.push('/naverAuth')
+    await logout()
     throw e
   }
+}
+
+export const logout = async function(){
+  localStorage.removeItem('token')
+  store.commit('logout')
+  router.push('/naverAuth')
+  await axios.post('https://trello.jeontuk-11.link/logout')
 }
 
 const authLink = setContext(async(_, { headers }) => {
