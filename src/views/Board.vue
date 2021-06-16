@@ -701,15 +701,19 @@ export default {
         name: el.name + " cloned",
       };
     },
-    addCard: async function (list_id, title, content, index) {
+    addCard: async function (list) {
       const userId = this.currentUser.id;
-      const imageUrl = await s3.upload(this.uploadingFile);
+      const listId = list.id;
+      const title = list.addTitle;
+      const content = list.addContent;
+      const index = list.cards.length;
+      const imageUrl = await s3.upload(list.uploadingFile);
 
-      await this.$apollo.mutate({
+      const { data: {insert_card_description_one: {card}}  } = await this.$apollo.mutate({
         mutation: gql`
           mutation addCard($list_id: Int!, $title: String!, $content: String!, $user_id: Int!, $index: Int!, $image: String!) {
-            insert_card_description(
-              objects: [
+            insert_card_description_one(
+              object: 
                 {
                   card: { data: { created_by_user_id: $user_id, column_id: $list_id, index: $index } }
                   title: $title
@@ -717,16 +721,40 @@ export default {
                   user_id: $user_id
                   image: $image
                 }
-              ]
             ) {
-              returning {
-                id
+              card {
+              card_description {
+                card_id
+                title
+                content
+                hyperlink
+                image
               }
+              created_by {
+                name
+                thumbnail
+              }
+              id
+              card_taggings {
+                tag {
+                  id
+                  tag
+                }
+              }
+              user_card_taggings {
+                user {
+                  id
+                  name
+                  thumbnail
+                }
+              }
+              index
+            }
             }
           }
         `,
         variables: {
-          list_id,
+          list_id: listId,
           title,
           content,
           user_id: userId,
