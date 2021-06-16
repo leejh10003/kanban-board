@@ -65,7 +65,10 @@
                 <i class="bx bx-check" />
               </vs-button>
             </div>
-            <div class="list-card">
+            <div
+              @dragover.prevent
+              @dragleave.prevent
+              @drop.prevent="dropCardCreate(list, $event)" class="list-card">
               <card
               @drop="dropFile(list, $event)"
               v-if="list.adding === true">
@@ -84,7 +87,7 @@
                       @click="chooseFiles(list.id)"
                       @dragover.prevent
                       @dragleave.prevent
-                      @drop.prevent="dropFile(list, $event)" >
+                      @drop.stop="dropFile(list, $event)" >
                       여기를 클릭하거나 드래그해 이미지 업로드...
                     </div>
                   </div>
@@ -106,14 +109,14 @@
                 <template #tailing>
                   <div style="display: flex; justify-content: flex-end">
                     <vs-button
-                      type="filled"
+                      transparent
                       color="primary"
                       v-on:click="addCard(list)"
                     >
                       추가
                     </vs-button>
                     <vs-button
-                      type="filled"
+                      transparent
                       color="danger"
                       v-on:click="list.adding = false"
                     >
@@ -490,6 +493,7 @@ import draggable from "vuedraggable";
 import gql from "graphql-tag";
 import Task from "../components/Task";
 import card from "../components/Card.vue";
+import { getToken } from '../vue-apollo';
 import S3 from "../s3";
 
 const s3 = new S3();
@@ -642,6 +646,19 @@ export default {
     },
   },
   methods: {
+    async dropCardCreate(list, event) {
+      const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image') || file.type.startsWith('text'))
+      if (files.length > 0){
+        list.adding = true
+        if (files[0].type.startsWith('image')){
+          list.fileName = files[0].name;
+          list.uploadingFile = files[0];
+          list.uploadingFileUrl = URL.createObjectURL(files[0]);
+        } else {
+          list.addContent = await files[0].text()
+        }
+      }
+    },
     async dropFile(list, event){
       const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image'))
       list.fileName = files[0].name;
@@ -707,7 +724,10 @@ export default {
       const title = list.addTitle;
       const content = list.addContent;
       const index = list.cards.length;
-      const imageUrl = await s3.upload(list.uploadingFile);
+
+      const applyToken = await getToken();
+      s3.refreshToken(applyToken);
+      const imageUrl = list.uploadingFile != null ? await s3.upload(list.uploadingFile) : "";
 
       const { data: {insert_card_description_one: {card}}  } = await this.$apollo.mutate({
         mutation: gql`
@@ -947,7 +967,6 @@ export default {
           }
         `,
       });
-      console.log(user);
       callback(
         user.map((user) => ({
           ...user,
