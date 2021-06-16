@@ -490,6 +490,9 @@ import draggable from "vuedraggable";
 import gql from "graphql-tag";
 import Task from "../components/Task";
 import card from "../components/Card.vue";
+import S3 from "../s3";
+
+const s3 = new S3();
 
 export default {
   name: "two-lists",
@@ -695,11 +698,11 @@ export default {
     },
     addCard: async function (list_id, title, content, index) {
       const userId = this.currentUser.id;
-      console.log(index);
+      const imageUrl = await s3.upload(this.uploadingFile);
 
       await this.$apollo.mutate({
         mutation: gql`
-          mutation addCard($list_id: Int!, $title: String!, $content: String!, $user_id: Int!, $index: Int!) {
+          mutation addCard($list_id: Int!, $title: String!, $content: String!, $user_id: Int!, $index: Int!, $image: String!) {
             insert_card_description(
               objects: [
                 {
@@ -707,6 +710,7 @@ export default {
                   title: $title
                   content: $content
                   user_id: $user_id
+                  image: $image
                 }
               ]
             ) {
@@ -722,6 +726,7 @@ export default {
           content,
           user_id: userId,
           index,
+          image: imageUrl,
         },
       });
       this.$apollo.queries.lists.refetch();
