@@ -67,30 +67,30 @@
             </div>
             <div class="list-card">
               <card
-              @drop="dropFile"
+              @drop="dropFile(list, $event)"
               v-if="list.adding === true">
                 <template #hero>
-                  {{fileName}}
+                  {{list.fileName}}
                   <div class="file-upload">
                     <input
-                      id="fileUpload"
+                      :id="'fileUpload' + list.id"
                       type="file"
-                      @change="handleFileChange"
+                      @change="handleFileChange(list, $event)"
                       hidden
                     />
                     <br/>
                     <div
                       class="file-upload-drop-area"
-                      @click="chooseFiles"
+                      @click="chooseFiles(list.id)"
                       @dragover.prevent
                       @dragleave.prevent
-                      @drop.prevent="dropFile" >
+                      @drop.prevent="dropFile(list, $event)" >
                       여기를 클릭하거나 드래그해 이미지 업로드...
                     </div>
                   </div>
                 </template>
                 <template #body>
-                  <img v-if="uploadingFileUrl" :src="uploadingFileUrl" />
+                  <img v-if="list.uploadingFileUrl" :src="list.uploadingFileUrl" />
                   <vs-input
                     type="text"
                     v-model="list.addTitle"
@@ -108,7 +108,7 @@
                     <vs-button
                       type="filled"
                       color="primary"
-                      v-on:click="addCard(list.id, list.addTitle, list.addContent, list.cards.length)"
+                      v-on:click="addCard(list)"
                     >
                       추가
                     </vs-button>
@@ -633,17 +633,20 @@ export default {
           addContent: "",
           fixingTitle: false,
           fixingPercentage: false,
+          fileName: "",
+          uploadingFile: null,
+          uploadingFileUrl: "",
           ...e,
         }));
       },
     },
   },
   methods: {
-    async dropFile(event){
+    async dropFile(list, event){
       const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image'))
-      this.fileName = files[0].name;
-      this.uploadingFile = files[0];
-      this.uploadingFileUrl = URL.createObjectURL(files[0]);
+      list.fileName = files[0].name;
+      list.uploadingFile = files[0];
+      list.uploadingFileUrl = URL.createObjectURL(files[0]);
     },
     async fixPercentage(list) {
       if (!list.percentage_progress) {
@@ -698,15 +701,19 @@ export default {
         name: el.name + " cloned",
       };
     },
-    addCard: async function (list_id, title, content, index) {
+    addCard: async function (list) {
       const userId = this.currentUser.id;
-      const imageUrl = await s3.upload(this.uploadingFile);
+      const listId = list.id;
+      const title = list.addTitle;
+      const content = list.addContent;
+      const index = list.cards.length;
+      const imageUrl = await s3.upload(list.uploadingFile);
 
-      await this.$apollo.mutate({
+      const { data: {insert_card_description_one: {card}}  } = await this.$apollo.mutate({
         mutation: gql`
           mutation addCard($list_id: Int!, $title: String!, $content: String!, $user_id: Int!, $index: Int!, $image: String!) {
-            insert_card_description(
-              objects: [
+            insert_card_description_one(
+              object: 
                 {
                   card: { data: { created_by_user_id: $user_id, column_id: $list_id, index: $index } }
                   title: $title
@@ -714,16 +721,40 @@ export default {
                   user_id: $user_id
                   image: $image
                 }
-              ]
             ) {
-              returning {
-                id
+              card {
+              card_description {
+                card_id
+                title
+                content
+                hyperlink
+                image
               }
+              created_by {
+                name
+                thumbnail
+              }
+              id
+              card_taggings {
+                tag {
+                  id
+                  tag
+                }
+              }
+              user_card_taggings {
+                user {
+                  id
+                  name
+                  thumbnail
+                }
+              }
+              index
+            }
             }
           }
         `,
         variables: {
-          list_id,
+          list_id: listId,
           title,
           content,
           user_id: userId,
@@ -731,7 +762,13 @@ export default {
           image: imageUrl,
         },
       });
-      this.$apollo.queries.lists.refetch();
+      list.cards.push(card);
+      list.adding = false;
+      list.addTitle = "";
+      list.addContent = "";
+      list.fileName = "";
+      list.uploadingFile = null;
+      list.uploadingFileUrl = "";
     },
     updateCardIndex: async function (cardId, index, columnId) {
       await this.$apollo.mutate({
@@ -957,13 +994,13 @@ export default {
       });
       this.setPermission = false;
     },
-    handleFileChange(e) {
-      this.fileName = e.target.files[0].name;
-      this.uploadingFile = e.target.files[0];
-      this.uploadingFileUrl = URL.createObjectURL(e.target.files[0]);
+    handleFileChange(list, e) {
+      list.fileName = e.target.files[0].name;
+      list.uploadingFile = e.target.files[0];
+      list.uploadingFileUrl = URL.createObjectURL(e.target.files[0]);
     },
-    chooseFiles() {
-      document.getElementById("fileUpload").click();
+    chooseFiles(id) {
+      document.getElementById("fileUpload" + id).click();
     },
   },
 };
