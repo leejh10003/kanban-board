@@ -802,7 +802,6 @@ export default {
     addColumn: async function (boardName) {
       const boardId = this.$route.params.id;
       const columnLength = this.lists.length + 1;
-      //TODO : modify user id
       const { data } = await this.$apollo.mutate({
         mutation: gql`
           mutation addColumn($board_id: Int!, $name: String!, $index: Int!) {
@@ -916,10 +915,6 @@ export default {
         index
       ].deleted = true;
       (kind === "admin" ? this.admins : this.participants).splice(index, 1);
-      // const Stickedtooltips = document.querySelectorAll(".vs-tooltip");
-      // for (const tooltip of Stickedtooltips) {
-      //   tooltip.remove();
-      // }
     },
     async querySearch(queryString, callback) {
       const {
