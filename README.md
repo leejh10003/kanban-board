@@ -42,7 +42,7 @@ yarn serve
 
 ~~Now open http://test.jeontuk-11.link:8080/~~
 
-Auth is required, so local link doesn't work.
+Auth is required, so local link doesn't work anymore.
 
 So test in https://trello.jeontuk-11.link/
 
