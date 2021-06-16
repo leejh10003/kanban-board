@@ -711,7 +711,7 @@ export default {
 
       const applyToken = await getToken();
       s3.refreshToken(applyToken);
-      const imageUrl = await s3.upload(list.uploadingFile);
+      const imageUrl = list.uploadingFile != null ? await s3.upload(list.uploadingFile) : "";
 
       const { data: {insert_card_description_one: {card}}  } = await this.$apollo.mutate({
         mutation: gql`
