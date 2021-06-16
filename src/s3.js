@@ -19,4 +19,8 @@ export default class S3 {
 
         return images.data[0].Location;
     }
+
+    refreshToken (token) {
+        this.token = token;
+    }
 }
