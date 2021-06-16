@@ -1,7 +1,14 @@
 <template>
   <div v-if="$apollo.queries.lists.loading"></div>
   <div v-else class="row">
-    <draggable class="list-group containers" :list="lists" group="column">
+    <draggable
+      class="list-group containers"
+      :list="lists"
+      group="column"
+      @end="updateColumnsIndex(lists)"
+      @add="updateColumnsIndex(lists)"
+      @remove="updateColumnsIndex(lists)"
+    >
       <div class="list-for" v-for="(list, index) in lists" :key="index">
         <div class="list-container">
           <div class="col-3">
@@ -739,13 +746,10 @@ export default {
     updateColumnIndex: async function (columnId, index) {
       await this.$apollo.mutate({
         mutation: gql`
-          mutation updateColumnIndex(
-            $column_id: Int!
-            $index: Int!
-          ) {
+          mutation updateColumnIndex($column_id: Int!, $index: Int!) {
             update_columns(
-              where: { id: { _eq: $card_id } }
-              _set: { index: $index, column_id: $column_id }
+              where: { id: { _eq: $column_id } }
+              _set: { index: $index }
             ) {
               returning {
                 id
@@ -760,6 +764,7 @@ export default {
       });
     },
     updateColumnsIndex: async function (lists) {
+      console.log(lists);
       const updatePromises = lists.map((e, index) => {
         return this.updateColumnIndex(e.id, index);
       });
