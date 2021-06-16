@@ -1,39 +1,63 @@
 <template>
   <div id="app">
-    <!--<div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>-->
-
-    <!-- <vs-navbar :fixed="true" style="position: relative;" color="#7d33ff" text-white square center-collapsed v-model="active">
+    <vs-navbar v-if="barVisible" :fixed="true" style="position: relative;" color="#7d33ff" text-white square center-collapsed v-model="active">
       <template #left>
         <img src="/logos/logo-vuesax-logotipo-vuesax-png-4.png" alt="">
       </template>
-      <vs-navbar-item :active="active == 'guide'" id="guide">
-        Guide
+      <vs-navbar-item v-if="entityVisible" to="/boards" :active="selected === '/boards'" id="boards">
+        보드들
       </vs-navbar-item>
-      <vs-navbar-item :active="active == 'docs'" id="docs">
-        Documents
-      </vs-navbar-item>
-      <vs-navbar-item :active="active == 'components'" id="components">
-        Components
-      </vs-navbar-item>
-      <vs-navbar-item :active="active == 'license'" id="license">
-        license
+      <vs-navbar-item v-if="entityVisible" to="/progress" :active="selected === '/progress'" id="progress">
+        진척도
       </vs-navbar-item>
       <template #right>
-        <vs-button color="#fff" flat >Login</vs-button>
-        <vs-button color="#fff" border >Get Started</vs-button>
+        <vs-button v-if="selected === '/board'" color="#fff" flat >보드들</vs-button>
+        <vs-button color="#fff" border >로그아웃</vs-button>
       </template>
-    </vs-navbar> -->
+    </vs-navbar>
     <router-view style="padding-top: 44px"/>
   </div>
 </template>
 <script>
 export default {
+  watch: {
+    $route(to){
+      if (['/boards', '/progress'].includes( to?.path)){
+        this.barVisible = true
+        this.entityVisible = true
+        this.selected = to?.path
+      } else if (to?.path?.startsWith('/board/')){
+        this.barVisible = true
+        this.entityVisible = false
+        this.selected = '/board'
+      } else {
+        this.barVisible = false
+        this.entityVisible = false
+      }
+      return this.$route
+    }
+  },
+  created(){
+    const to = this.$router.currentRoute
+    if (['/boards', '/progress'].includes( to?.path)){
+        this.barVisible = true
+        this.entityVisible = true
+        this.selected = to?.path
+      } else if (to?.path?.startsWith('/board/')){
+        this.barVisible = true
+        this.entityVisible = false
+      } else {
+        this.barVisible = false
+        this.entityVisible = false
+      }
+      return this.$route
+  },
   data(){
     return {
       active: 'guide',
+      barVisible: true,
+      entityVisible: true,
+      selected: '/boards'
     }
   }
 }
