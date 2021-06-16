@@ -65,7 +65,10 @@
                 <i class="bx bx-check" />
               </vs-button>
             </div>
-            <div class="list-card">
+            <div
+              @dragover.prevent
+              @dragleave.prevent
+              @drop.prevent="dropCardCreate(list, $event)" class="list-card">
               <card
               @drop="dropFile(list, $event)"
               v-if="list.adding === true">
@@ -84,7 +87,7 @@
                       @click="chooseFiles(list.id)"
                       @dragover.prevent
                       @dragleave.prevent
-                      @drop.prevent="dropFile(list, $event)" >
+                      @drop.stop="dropFile(list, $event)" >
                       여기를 클릭하거나 드래그해 이미지 업로드...
                     </div>
                   </div>
@@ -643,6 +646,13 @@ export default {
     },
   },
   methods: {
+    async dropCardCreate(list, event) {
+      const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image'))
+      list.adding = true
+      list.fileName = files[0].name;
+      list.uploadingFile = files[0];
+      list.uploadingFileUrl = URL.createObjectURL(files[0]);
+    },
     async dropFile(list, event){
       const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image'))
       list.fileName = files[0].name;
@@ -951,7 +961,6 @@ export default {
           }
         `,
       });
-      console.log(user);
       callback(
         user.map((user) => ({
           ...user,
