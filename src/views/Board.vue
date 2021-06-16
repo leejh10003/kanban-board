@@ -522,6 +522,9 @@ export default {
       newAdminQuery: "",
       newParticipantsQuery: "",
       setPermission: false,
+      fileName: "",
+      uploadingFile: null, 
+      uploadingFileUrl: "", 
     };
   },
   beforeDestroy: function () {
