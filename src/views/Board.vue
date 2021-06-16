@@ -869,7 +869,17 @@ export default {
         },
       });
       this.$data.addingColumn = false;
-      this.lists.push(data.insert_columns_one);
+      this.lists.push({
+        adding: false,
+        addTitle: "",
+        addContent: "",
+        fixingTitle: false,
+        fixingPercentage: false,
+        fileName: "",
+        uploadingFile: null,
+        uploadingFileUrl: "",
+        ...data.insert_columns_one
+      });
     },
     updateColumnIndex: async function (columnId, index) {
       await this.$apollo.mutate({
