@@ -762,7 +762,13 @@ export default {
           image: imageUrl,
         },
       });
-      this.$apollo.queries.lists.refetch();
+      list.cards.push(card);
+      list.adding = false;
+      list.addTitle = "";
+      list.addContent = "";
+      list.fileName = "";
+      list.uploadingFile = null;
+      list.uploadingFileUrl = "";
     },
     updateCardIndex: async function (cardId, index, columnId) {
       await this.$apollo.mutate({
