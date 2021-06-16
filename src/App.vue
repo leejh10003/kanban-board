@@ -12,13 +12,14 @@
       </vs-navbar-item>
       <template #right>
         <vs-button v-if="selected === '/board'" color="#fff" flat >보드들</vs-button>
-        <vs-button color="#fff" border >로그아웃</vs-button>
+        <vs-button @click="logout" color="#fff" border >로그아웃</vs-button>
       </template>
     </vs-navbar>
     <router-view style="padding-top: 44px"/>
   </div>
 </template>
 <script>
+import { logout } from './vue-apollo'
 export default {
   watch: {
     $route(to){
@@ -51,6 +52,9 @@ export default {
         this.entityVisible = false
       }
       return this.$route
+  },
+  methods: {
+    logout
   },
   data(){
     return {
