@@ -551,8 +551,10 @@ export default {
             cards(order_by: { index: asc }) {
               card_description {
                 card_id
+                title
                 content
                 hyperlink
+                image
               }
               created_by {
                 name
@@ -803,7 +805,6 @@ export default {
           index: columnLength,
         },
       });
-      console.log(data);
       this.$data.addingColumn = false;
       this.lists.push(data.insert_columns_one);
     },
@@ -828,7 +829,6 @@ export default {
       });
     },
     updateColumnsIndex: async function (lists) {
-      console.log(lists);
       const updatePromises = lists.map((e, index) => {
         return this.updateColumnIndex(e.id, index);
       });
@@ -837,7 +837,6 @@ export default {
     },
     updateCardsIndex: async function (list) {
       const updatePromises = list.cards.map((e, index) => {
-        console.log(e.id, index, list.id);
         return this.updateCardIndex(e.id, index, list.id);
       });
 
