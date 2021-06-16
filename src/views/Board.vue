@@ -499,7 +499,7 @@ export default {
             name
             percentage_progress
             cards(order_by: { index: asc }) {
-              card_descriptions {
+              card_description {
                 card_id
                 content
                 hyperlink
@@ -705,9 +705,11 @@ export default {
               name
               percentage_progress
               cards(order_by: { index: asc }) {
-                card_descriptions {
+                card_description {
                   card_id
+                  title
                   content
+                  image
                   hyperlink
                 }
                 created_by {
