@@ -109,14 +109,14 @@
                 <template #tailing>
                   <div style="display: flex; justify-content: flex-end">
                     <vs-button
-                      type="filled"
+                      transparent
                       color="primary"
                       v-on:click="addCard(list)"
                     >
                       추가
                     </vs-button>
                     <vs-button
-                      type="filled"
+                      transparent
                       color="danger"
                       v-on:click="list.adding = false"
                     >
