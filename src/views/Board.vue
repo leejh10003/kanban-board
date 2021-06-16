@@ -686,13 +686,42 @@ export default {
     },
     addColumn: async function (boardName) {
       const boardId = this.$route.params.id;
+      const columnLength = this.lists.length + 1;
       //TODO : modify user id
-      await this.$apollo.mutate({
+      const { data } = await this.$apollo.mutate({
         mutation: gql`
-          mutation addColumn($board_id: Int!, $name: String!) {
-            insert_columns(objects: [{ board_id: $board_id, name: $name }]) {
-              returning {
+          mutation addColumn($board_id: Int!, $name: String!, $index: Int!) {
+            insert_columns_one(
+              object: { board_id: $board_id, name: $name, index: $index }
+            ) {
+              id
+              name
+              percentage_progress
+              cards(order_by: { index: asc }) {
+                card_descriptions {
+                  card_id
+                  content
+                  hyperlink
+                }
+                created_by {
+                  name
+                  thumbnail
+                }
                 id
+                card_taggings {
+                  tag {
+                    id
+                    tag
+                  }
+                }
+                user_card_taggings {
+                  user {
+                    id
+                    name
+                    thumbnail
+                  }
+                }
+                index
               }
             }
           }
@@ -729,6 +758,13 @@ export default {
           column_id: columnId,
         },
       });
+    },
+    updateColumnsIndex: async function (lists) {
+      const updatePromises = lists.map((e, index) => {
+        return this.updateColumnIndex(e.id, index);
+      });
+
+      await Promise.all(updatePromises);
     },
     updateCardsIndex: async function (list) {
       const updatePromises = list.cards.map((e, index) => {
