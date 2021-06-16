@@ -40,8 +40,12 @@ Open your hosts file, and add line
 yarn serve
 ```
 
-Now open http://test.jeontuk-11.link:8080/
+~~Now open http://test.jeontuk-11.link:8080/~~
+
+Auth is required, so local link doesn't work.
+
+So test in https://trello.jeontuk-11.link/
 
 ## Wiki
 
-http://ec2-54-180-17-216.ap-northeast-2.compute.amazonaws.com:3000/
+http://trello.jeontuk-11.link:3000/
