@@ -490,6 +490,7 @@ import draggable from "vuedraggable";
 import gql from "graphql-tag";
 import Task from "../components/Task";
 import card from "../components/Card.vue";
+import { getToken } from '../vue-apollo';
 import S3 from "../s3";
 
 const s3 = new S3();
@@ -707,7 +708,10 @@ export default {
       const title = list.addTitle;
       const content = list.addContent;
       const index = list.cards.length;
-      const imageUrl = await s3.upload(list.uploadingFile);
+
+      const applyToken = await getToken();
+      s3.refreshToken(applyToken);
+      const imageUrl = list.uploadingFile != null ? await s3.upload(list.uploadingFile) : "";
 
       const { data: {insert_card_description_one: {card}}  } = await this.$apollo.mutate({
         mutation: gql`
