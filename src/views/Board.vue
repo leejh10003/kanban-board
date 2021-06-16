@@ -640,7 +640,7 @@ export default {
   },
   methods: {
     async dropFile(event){
-      const file = Array.from(event.dataTransfer.files)
+      const file = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image'))
       console.log(file)
     },
     async fixPercentage(list) {
