@@ -487,7 +487,7 @@ export default {
       },
       query: gql`
         query ($id: Int!) {
-          columns(where: { board_id: { _eq: $id } }) {
+          columns(where: { board_id: { _eq: $id } }, order_by: { index: asc }) {
             id
             name
             percentage_progress
@@ -656,7 +656,6 @@ export default {
       this.$apollo.queries.lists.refetch();
     },
     updateCardIndex: async function (cardId, index, columnId) {
-      //TODO : modify user id
       await this.$apollo.mutate({
         mutation: gql`
           mutation updateCardIndex(
@@ -701,13 +700,37 @@ export default {
         variables: {
           board_id: boardId,
           name: boardName,
+          index: columnLength,
         },
       });
+      console.log(data);
       this.$data.addingColumn = false;
+      this.lists.push(data.insert_columns_one);
+    },
+    updateColumnIndex: async function (columnId, index) {
+      await this.$apollo.mutate({
+        mutation: gql`
+          mutation updateColumnIndex(
+            $column_id: Int!
+            $index: Int!
+          ) {
+            update_columns(
+              where: { id: { _eq: $card_id } }
+              _set: { index: $index, column_id: $column_id }
+            ) {
+              returning {
+                id
+              }
+            }
+          }
+        `,
+        variables: {
+          index,
+          column_id: columnId,
+        },
+      });
     },
     updateCardsIndex: async function (list) {
-      console.log(list);
-      console.log(list.cards);
       const updatePromises = list.cards.map((e, index) => {
         console.log(e.id, index, list.id);
         return this.updateCardIndex(e.id, index, list.id);
