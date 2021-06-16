@@ -68,9 +68,31 @@
             <div class="list-card">
               <card v-if="list.adding === true">
                 <template #hero>
-                  <img :src="''" alt="" />
+                  {{fileName}}
+                  <div class="file-upload">
+                  <input
+                    id="fileUpload"
+                    type="file"
+                    @change="handleFileChange"
+                    hidden
+                  />
+                  <br/>
+                  <vs-button
+                    class="file-upload-button"
+                    @click="chooseFiles"
+                  >
+                  Image File upload
+                  </vs-button>
+                  </div>
                 </template>
                 <template #body>
+                  <img v-if="uploadingFileUrl" :src="uploadingFileUrl" />
+                  <vs-input
+                    type="text"
+                    v-model="list.addTitle"
+                    class="add-card-body"
+                    placeholder="제목"
+                  />
                   <vs-input
                     type="text"
                     v-model="list.addContent"
@@ -318,6 +340,23 @@
 </template>
 
 <style lang="scss" scoped>
+
+.file-upload {
+  align-content: center;
+  display: flex;
+  justify-content: center;
+}
+
+.file-upload-button {
+  width: 80%;
+  text-align: center;
+}
+
+.add-card-body {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 .set-permission {
   position: fixed;
   bottom: 30px;
@@ -472,6 +511,9 @@ export default {
       newAdminQuery: "",
       newParticipantsQuery: "",
       setPermission: false,
+      fileName: "",
+      uploadingFile: null, 
+      uploadingFileUrl: "", 
     };
   },
   beforeDestroy: function () {
@@ -573,6 +615,7 @@ export default {
         this.initPermissions(this.$data.admins, this.$data.participants);
         return data.columns.map((e) => ({
           adding: false,
+          addTitle: "",
           addContent: "",
           fixingTitle: false,
           fixingPercentage: false,
@@ -888,6 +931,14 @@ export default {
         },
       });
       this.setPermission = false;
+    },
+    handleFileChange(e) {
+      this.fileName = e.target.files[0].name;
+      this.uploadingFile = e.target.files[0];
+      this.uploadingFileUrl = URL.createObjectURL(e.target.files[0]);
+    },
+    chooseFiles() {
+      document.getElementById("fileUpload").click();
     },
   },
 };
