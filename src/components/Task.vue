@@ -3,8 +3,8 @@
     <template #hero>
       <img
         class="hero"
-        v-if="!!element.image"
-        :src="element.image"
+        v-if="!!element.card_description && !!element.card_description.image"
+        :src="element.card_description.image"
       />
       <img
         class="hero"
