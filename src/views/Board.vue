@@ -67,30 +67,30 @@
             </div>
             <div class="list-card">
               <card
-              @drop="dropFile"
+              @drop="dropFile(list, $event)"
               v-if="list.adding === true">
                 <template #hero>
-                  {{fileName}}
+                  {{list.fileName}}
                   <div class="file-upload">
                     <input
-                      id="fileUpload"
+                      :id="'fileUpload' + list.id"
                       type="file"
-                      @change="handleFileChange"
+                      @change="handleFileChange(list, $event)"
                       hidden
                     />
                     <br/>
                     <div
                       class="file-upload-drop-area"
-                      @click="chooseFiles"
+                      @click="chooseFiles(list.id)"
                       @dragover.prevent
                       @dragleave.prevent
-                      @drop.prevent="dropFile" >
+                      @drop.prevent="dropFile(list, $event)" >
                       여기를 클릭하거나 드래그해 이미지 업로드...
                     </div>
                   </div>
                 </template>
                 <template #body>
-                  <img v-if="uploadingFileUrl" :src="uploadingFileUrl" />
+                  <img v-if="list.uploadingFileUrl" :src="list.uploadingFileUrl" />
                   <vs-input
                     type="text"
                     v-model="list.addTitle"
