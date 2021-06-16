@@ -239,10 +239,8 @@ export default {
       });
     },
     insertTagHandler: async function (newTag) {
-      // const equalTag = this.$props.tagList.find(e => e.tag === newTag);
       let newTagId;
       let newTagName;
-      // console.log(equalTag);
       if (newTag.id != null) {
         newTagId = newTag.id;
         newTagName = newTag.tag;
