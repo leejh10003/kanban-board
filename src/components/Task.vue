@@ -13,14 +13,27 @@
       />
     </template>
     <template #title>
-      <h3 style="margin: 0px">{{ element.card_description != null ? element.card_description.title : ""}}</h3>
+      <h3 style="margin: 0px">
+        {{
+          element.card_description != null ? element.card_description.title : ""
+        }}
+      </h3>
     </template>
     <template #body>
-      <p class="post-description">{{ element.card_description != null ? element.card_description.content : ""}}</p>
+      <p class="post-description">
+        {{
+          element.card_description != null
+            ? element.card_description.content
+            : ""
+        }}
+      </p>
       <div class="div-assign">
         <md-menu md-direction="bottom-end" mdCloseOnClick>
           <vs-avatar md-menu-trigger size="40">
-            <img v-if="taggedUser != null && taggedUser.thumbnail != null" :src="taggedUser.thumbnail" />
+            <img
+              v-if="taggedUser != null && taggedUser.thumbnail != null"
+              :src="taggedUser.thumbnail"
+            />
             <i v-else class="bx bx-user"></i>
           </vs-avatar>
           <!-- <md-button md-menu-trigger class="md-icon-button md-dense">
