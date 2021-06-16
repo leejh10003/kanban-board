@@ -108,7 +108,7 @@
                     <vs-button
                       type="filled"
                       color="primary"
-                      v-on:click="addCard(list.id, list.addTitle, list.addContent, list.cards.length)"
+                      v-on:click="addCard(list)"
                     >
                       추가
                     </vs-button>
@@ -633,17 +633,20 @@ export default {
           addContent: "",
           fixingTitle: false,
           fixingPercentage: false,
+          fileName: "",
+          uploadingFile: null,
+          uploadingFileUrl: "",
           ...e,
         }));
       },
     },
   },
   methods: {
-    async dropFile(event){
+    async dropFile(list, event){
       const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith('image'))
-      this.fileName = files[0].name;
-      this.uploadingFile = files[0];
-      this.uploadingFileUrl = URL.createObjectURL(files[0]);
+      list.fileName = files[0].name;
+      list.uploadingFile = files[0];
+      list.uploadingFileUrl = URL.createObjectURL(files[0]);
     },
     async fixPercentage(list) {
       if (!list.percentage_progress) {
@@ -957,13 +960,13 @@ export default {
       });
       this.setPermission = false;
     },
-    handleFileChange(e) {
-      this.fileName = e.target.files[0].name;
-      this.uploadingFile = e.target.files[0];
-      this.uploadingFileUrl = URL.createObjectURL(e.target.files[0]);
+    handleFileChange(list, e) {
+      list.fileName = e.target.files[0].name;
+      list.uploadingFile = e.target.files[0];
+      list.uploadingFileUrl = URL.createObjectURL(e.target.files[0]);
     },
-    chooseFiles() {
-      document.getElementById("fileUpload").click();
+    chooseFiles(id) {
+      document.getElementById("fileUpload" + id).click();
     },
   },
 };
